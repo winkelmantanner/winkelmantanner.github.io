@@ -1,47 +1,98 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script type="text/javascript">
       const LESSONS = {
         1 : {
           questions : [
             {
-              'q' : "A trolley is approaching along its track.  If it stays on its track, it will run over five people who tied down to its track.  If you pull a lever, the trolley would be diverted to another track with only one person tied down.  According to Utilitarianism, should you pull the lever or not?  Why?",
+              'q' : "A trolley is approaching along its track.  If it stays on its track, it will run over five people who are tied down to its track.  If you pull a lever, the trolley would be diverted to another track with only one person tied down.  According to Utilitarianism, should you pull the lever or not?  Why?",
               'a' : [
                 "Pull the lever because it is 4 lives better than not pulling the lever.",
                 "Don't pull the lever because you should not intervene without permission.",
                 "Pull the lever because it would demonstrate a good amount of courage.",
               ],
               'c' : 0,
+              'e' : 'Utilitarianism says to maximize net aggregate hapiness.  Saving 5 lives for the cost of 1 life is the better option, so Utilitarianism would obligate you to pull the lever.',
             },
           ]
         }
       };
 
+      var user_choices = [];
+
+      var generated = false;
+
+      function setupOnClicks(lessonID) {
+        questions = LESSONS[lessonID].questions;
+        questions.forEach(function(question, question_index) {
+          question.a.forEach(function(answer, answer_index) {
+            const answerChoiceId = generateAnswerChoiceId(lessonID, question_index, answer_index);
+            const questionId = generateQuestionId(lessonID, question_index);
+            const is_correct = answer_index == question.c;
+            document.getElementById(answerChoiceId).onclick = function(){
+              document.getElementById(answerChoiceId).classList.remove('btn-default');
+              document.getElementById(answerChoiceId).classList.add('btn-' + (is_correct ? 'success' : 'danger'));
+              if(is_correct) {
+                document.getElementById(questionId).hidden = false;
+              }
+            }
+          });
+        });
+      }
+
+      function generateQuestionId(lessonID, question_index) {
+        return String(lessonID) + ":" + String(question_index);
+      }
+
+      function generateAnswerChoiceId(lessonID, question_index, answer_index) {
+        return String(lessonID) + ":" + String(question_index) + ":" + String(answer_index);
+      }
+
       function generateLesson(lessonID) {
         material = LESSONS[lessonID].material;
         questions = LESSONS[lessonID].questions;
-        html = "";
-        questions.forEach(function(question) {
+        let html = "";
+        questions.forEach(function(question, question_index) {
           html += '<h4>';
           html += question.q;
           html += '</h4>';
           html += '<table><tbody>';
-          question.a.forEach(function(answer) {
-            html += '<tr><td>' + answer + '<td><tr>';
+          question.a.forEach(function(answer, answer_index) {
+            answerChoiceId = generateAnswerChoiceId(lessonID, question_index, answer_index);
+            html += '<tr><td><div';
+            html += ' id="' + answerChoiceId + '"';
+            html += 'class="btn btn-default">';
+            html += answer;
+            html += '</div></td></tr>';
           });
           html += '</tbody></table>';
+          html += '<div hidden="true" id="' + generateQuestionId(lessonID, question_index) + '">';
+          html += question.e;
+          html += '</div>';
         });
         return html;
       }
 
       function onLoad() {
-        document.getElementById("content").innerHTML = generateLesson(1);
+        let lessonID = 1;
+        if(!generated) {
+          document.getElementById("content").innerHTML = generateLesson(lessonID);
+          generated = true;
+        }
+        setupOnClicks(lessonID);
       }
     </script>
   </head>
   <body onLoad="onLoad()">
-    <h3>Ethics Project</h3>
-    <div id="content"></div>
+    <div class="container">
+      <h3>Ethics Project</h3>
+      <div id="content"></div>
+    </div>
   </body>
 </html>
