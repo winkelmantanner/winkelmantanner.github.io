@@ -26,8 +26,6 @@
 
       var user_choices = [];
 
-      var generated = false;
-
       function setupOnClicks(lessonID) {
         questions = LESSONS[lessonID].questions;
         questions.forEach(function(question, question_index) {
@@ -81,10 +79,7 @@
 
       function onLoad() {
         let lessonID = 1;
-        if(!generated) {
-          document.getElementById("content").innerHTML = generateLesson(lessonID);
-          generated = true;
-        }
+        document.getElementById("content").innerHTML = generateLesson(lessonID);
         setupOnClicks(lessonID);
       }
     </script>
