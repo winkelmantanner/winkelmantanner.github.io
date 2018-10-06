@@ -20,11 +20,16 @@
               'c' : 0,
               'e' : 'Utilitarianism says to maximize net aggregate hapiness.  Saving 5 lives for the cost of 1 life is the better option, so Utilitarianism would obligate you to pull the lever.',
             },
-          ]
-        }
+          ],
+        },
       };
 
-      var user_choices = [];
+      const VIDEO_WIDTH_NORMAL = 640;
+      const VIDEO_HEIGHT_NORMAL = 480;
+      const VIDEO_WIDTH_SMALL = 320;
+      // const VIDEO_HEIGHT_SMALL = 240;
+      // const VIDEO_WIDTH_LARGE = 1000;
+      // const VIDEO_HEIGHT_LARGE = 240;
 
       function setupOnClicks(lessonID) {
         questions = LESSONS[lessonID].questions;
@@ -44,6 +49,30 @@
         });
       }
 
+      var myVideo = document.getElementById("video1"); 
+
+      function playPause() { 
+        if (myVideo.paused) {
+          myVideo.play();
+          document.getElementById('videoStatusDisplay').innerHTML = "Playing";
+        }else{
+          myVideo.pause();
+          document.getElementById('videoStatusDisplay').innerHTML = "Paused"
+        } 
+      } 
+
+      // function makeBig() { 
+      //     myVideo.width = VIDEO_WIDTH_LARGE; 
+      // } 
+
+      function makeSmall() { 
+          myVideo.width = VIDEO_WIDTH_SMALL; 
+      } 
+
+      function makeNormal() { 
+          myVideo.width = VIDEO_WIDTH_NORMAL; 
+      } 
+
       function generateQuestionId(lessonID, question_index) {
         return String(lessonID) + ":" + String(question_index);
       }
@@ -56,6 +85,21 @@
         material = LESSONS[lessonID].material;
         questions = LESSONS[lessonID].questions;
         let html = "";
+        // html += '<iframe width="420" height="315" src="Presentation1.mp4?rel=0&cc_load_policy=1">';
+        // html += '</iframe>'
+        html += '<button onclick="playPause()">Play/Pause</button>';
+        // html += '<button onclick="makeBig()">Big</button>';
+        html += '<button onclick="makeSmall()">Small</button>';
+        html += '<button onclick="makeNormal()">Normal</button>';
+        html += '<span id="videoStatusDisplay"></span>';
+        html += '<div style="background-color: black; text-align: center;">';
+        html += '<video id="video1" width="' + VIDEO_WIDTH_NORMAL + '" height="' + VIDEO_HEIGHT_NORMAL + '">';
+        html += '<source src="Presentation' + String(lessonID) + '.mp4" type="video/mp4">';
+        html += 'Your browser does not support the video tag.';
+        html += '</video>';
+        html += '</div>';
+        html += '<hr></hr>';
+        html += '<h3>Questions</h3>';
         questions.forEach(function(question, question_index) {
           html += '<h4>';
           html += question.q;
@@ -80,6 +124,7 @@
       function onLoad() {
         let lessonID = 1;
         document.getElementById("content").innerHTML = generateLesson(lessonID);
+        myVideo = document.getElementById("video1"); 
         setupOnClicks(lessonID);
       }
     </script>
