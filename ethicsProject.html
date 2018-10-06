@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="text/javascript">
+      const LESSONS = {
+        1 : {
+          questions : [
+            {
+              'q' : "A trolley is approaching along its track.  If it stays on its track, it will run over five people who tied down to its track.  If you pull a lever, the trolley would be diverted to another track with only one person tied down.  According to Utilitarianism, should you pull the lever or not?  Why?",
+              'a' : [
+                "Pull the lever because it is 4 lives better than not pulling the lever.",
+                "Don't pull the lever because you should not intervene without permission.",
+                "Pull the lever because it would demonstrate a good amount of courage.",
+              ],
+              'c' : 0,
+            },
+          ]
+        }
+      };
+
+      function generateLesson(lessonID) {
+        material = LESSONS[lessonID].material;
+        questions = LESSONS[lessonID].questions;
+        html = "";
+        questions.forEach(function(question) {
+          html += '<h4>';
+          html += question.q;
+          html += '</h4>';
+          html += '<table><tbody>';
+          question.a.forEach(function(answer) {
+            html += '<tr><td>' + answer + '<td><tr>';
+          });
+          html += '</tbody></table>';
+        });
+        return html;
+      }
+
+      function onLoad() {
+        document.getElementById("content").innerHTML = generateLesson(1);
+      }
+    </script>
+  </head>
+  <body onLoad="onLoad()">
+    <h3>Ethics Project</h3>
+    <div id="content"></div>
+  </body>
+</html>
