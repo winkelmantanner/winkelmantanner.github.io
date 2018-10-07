@@ -115,17 +115,8 @@
         material = LESSONS[lessonID].material;
         questions = LESSONS[lessonID].questions;
         let html = "";
-        html += '<button onclick="playPause()">Play/Pause</button>';
-        html += '<button onclick="makeSmall()">Small</button>';
-        html += '<button onclick="makeNormal()">Normal</button>';
-        html += '<span id="videoStatusDisplay"></span>';
-        html += '<div style="background-color: black; text-align: center;">';
-        html += '<video id="video1" width="' + VIDEO_WIDTH_NORMAL + '" height="' + VIDEO_HEIGHT_NORMAL + '">';
-        html += '<source src="Presentation' + String(lessonID) + '.mp4" type="video/mp4">';
-        html += 'Your browser does not support the video tag.';
-        html += '</video>';
-        html += '</div>';
-        html += '<hr></hr>';
+        html += '<a id="video1" target="_blank" class="btn btn-info" href="Presentation' + String(lessonID) + '.mp4">LECTURE ' + String(lessonID) + '</a>';
+        html += '<hr>';
         html += '<h3>Questions</h3>';
         questions.forEach(function(question, question_index) {
           html += '<h4>';
