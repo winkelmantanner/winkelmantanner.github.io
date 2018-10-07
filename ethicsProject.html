@@ -22,6 +22,20 @@
             },
           ],
         },
+        2 : {
+          questions : [
+            {
+              'q' : "asdf",
+              'a' : [
+                "qwer",
+                "Dzxcv",
+                "poiu",
+              ],
+              'c' : 0,
+              'e' : 'lkjh',
+            },
+          ],
+        },
       };
 
       const VIDEO_WIDTH_NORMAL = 640;
@@ -30,6 +44,8 @@
       // const VIDEO_HEIGHT_SMALL = 240;
       // const VIDEO_WIDTH_LARGE = 1000;
       // const VIDEO_HEIGHT_LARGE = 240;
+
+      let lessonID = 1;
 
       function setupOnClicks(lessonID) {
         questions = LESSONS[lessonID].questions;
@@ -85,10 +101,7 @@
         material = LESSONS[lessonID].material;
         questions = LESSONS[lessonID].questions;
         let html = "";
-        // html += '<iframe width="420" height="315" src="Presentation1.mp4?rel=0&cc_load_policy=1">';
-        // html += '</iframe>'
         html += '<button onclick="playPause()">Play/Pause</button>';
-        // html += '<button onclick="makeBig()">Big</button>';
         html += '<button onclick="makeSmall()">Small</button>';
         html += '<button onclick="makeNormal()">Normal</button>';
         html += '<span id="videoStatusDisplay"></span>';
@@ -121,17 +134,39 @@
         return html;
       }
 
-      function onLoad() {
-        let lessonID = 1;
+      function renderLesson(lessonID) {
+        document.getElementById("whichLesson").innerHTML = "Lesson " + String(lessonID);
         document.getElementById("content").innerHTML = generateLesson(lessonID);
         myVideo = document.getElementById("video1"); 
         setupOnClicks(lessonID);
+      }
+
+      function previousLesson() {
+        if(lessonID > 1) {
+          lessonID -= 1;
+          renderLesson(lessonID);
+        }
+      }
+
+      function nextLesson() {
+        if(lessonID < Object.keys(LESSONS).length) {
+          lessonID += 1;
+          renderLesson(lessonID);
+        }
+      }
+
+      function onLoad() {
+        renderLesson(lessonID);
       }
     </script>
   </head>
   <body onLoad="onLoad()">
     <div class="container">
       <h3>Business Ethics Project</h3>
+      <button id="previousLessonButton" onClick="previousLesson()">Previous Lesson</button>
+      <span id="whichLesson"></span>
+      <button id="nextLessonButton" onClick="nextLesson()">Next Lesson</button>
+      <hr>
       <div id="content"></div>
     </div>
     <hr>
