@@ -226,22 +226,38 @@
         lessonID = 1;
       }
 
+      function is_correct_answer_revealed(lessonID, question_index, correct_answer_index) {
+        const correct_answer_choice_element = document.getElementById(generateAnswerChoiceId(lessonID, question_index, correct_answer_index));
+        return correct_answer_choice_element.classList.contains('btn-success');
+      }
+
+      function are_all_correct_answers_revealed(lessonID) {
+        function reducer(accumulator, next_question, question_index) {
+          return accumulator && is_correct_answer_revealed(lessonID, question_index, next_question.c);
+        }
+        return LESSONS[lessonID].questions.reduce(reducer, true);
+      }
+
       function setupOnClicks(lessonID) {
         questions = LESSONS[lessonID].questions;
         questions.forEach(function(question, question_index) {
           question.a.forEach(function(answer, answer_index) {
             const answerChoiceId = generateAnswerChoiceId(lessonID, question_index, answer_index);
             const questionId = generateQuestionId(lessonID, question_index);
-            const is_correct = answer_index == question.c;
+            const is_correct = answer_index === question.c;
             document.getElementById(answerChoiceId).onclick = function(){
               document.getElementById(answerChoiceId).classList.remove('btn-default');
               document.getElementById(answerChoiceId).classList.add('btn-' + (is_correct ? 'success' : 'danger'));
               if(is_correct) {
                 document.getElementById(questionId).hidden = false;
               }
+              if( are_all_correct_answers_revealed(lessonID) ) {
+                document.getElementById('bottomNextLessonButtonContainer').hidden = false;
+              }
             }
           });
         });
+        document.getElementById('bottomNextLessonButton').onclick = nextLesson;
       }
 
       var myVideo = document.getElementById("video1"); 
@@ -301,6 +317,10 @@
           html += question.e;
           html += '</div>';
         });
+        html += '<div hidden="true" id="bottomNextLessonButtonContainer">';
+        html += '<hr>';
+        html += '<button id="bottomNextLessonButton">Next Lesson</button>';
+        html += '</div>';
         return html;
       }
 
