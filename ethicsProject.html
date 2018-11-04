@@ -312,12 +312,12 @@
 
         const TARGET_REGEX = /lessonID\=\d+/g;
         if( window.location.href.search(TARGET_REGEX) === -1 ) {
-          delimiter = '?';
-          if( parse_query_string(window.location.href) !== {} ){
-            delimiter = '&';
-          }
-          history.pushState('asdf', "qwer", window.location.href + delimiter + 'lessonID=' + String(lessonID));
+          // lessonID param is not in the href
+          const delimiter = window.location.href.search(/\?/) === -1 ? '?' : '&';
+          const new_href = window.location.href + delimiter + 'lessonID=' + String(lessonID);
+          history.pushState('asdf', "qwer", new_href);
         }else{
+          // lessonID param is in the href
           history.pushState('asdf', "qwer", window.location.href.replace(TARGET_REGEX, 'lessonID=' + String(lessonID)));
         }
       }
