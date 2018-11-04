@@ -210,7 +210,7 @@
                 "Third World workers",
                 "American governments",
                 "Third World governments",
-                "Obese feline animals",
+                "Overweight feline animals",
               ],
               'c' : 1,
               'e' : 'According to Krugman, “While fat-cat capitalists might benefit from globalization, the biggest beneficiaries are, yes, Third World workers”',
@@ -297,7 +297,7 @@
           question.a.forEach(function(answer, answer_index) {
             answerChoiceId = generateAnswerChoiceId(lessonID, question_index, answer_index);
             html += '<tr><td><div';
-            html += ' id="' + answerChoiceId + '"';
+            html += ' id="' + answerChoiceId + '" ';
             html += 'class="btn btn-default">';
             html += answer;
             html += '</div></td></tr>';
