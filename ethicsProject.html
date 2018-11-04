@@ -216,19 +216,12 @@
           // If first entry with this name
           if (typeof query_string[key] === "undefined") {
             query_string[key] = decodeURIComponent(value);
-            // If second entry with this name
-          }// else if (typeof query_string[key] === "string") {
-          //   var arr = [query_string[key], decodeURIComponent(value)];
-          //   query_string[key] = arr;
-          //   // If third or later entry with this name
-          // } else {
-          //   query_string[key].push(decodeURIComponent(value));
-          // }
+          }
         }
         return query_string;
       }
 
-      let lessonID = parse_query_string(window.location.search.substring(1)).lessonID;
+      let lessonID = Number(parse_query_string(window.location.search.substring(1)).lessonID);
       if( LESSONS[lessonID] === undefined ) {
         lessonID = 1;
       }
@@ -316,6 +309,17 @@
         document.getElementById("content").innerHTML = generateLesson(lessonID);
         myVideo = document.getElementById("video1"); 
         setupOnClicks(lessonID);
+
+        const TARGET_REGEX = /lessonID\=\d+/g;
+        if( window.location.href.search(TARGET_REGEX) === -1 ) {
+          delimiter = '?';
+          if( parse_query_string(window.location.href) !== {} ){
+            delimiter = '&';
+          }
+          history.pushState('asdf', "qwer", window.location.href + delimiter + 'lessonID=' + String(lessonID));
+        }else{
+          history.pushState('asdf', "qwer", window.location.href.replace(TARGET_REGEX, 'lessonID=' + String(lessonID)));
+        }
       }
 
       function previousLesson() {
