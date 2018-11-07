@@ -294,6 +294,9 @@
               }
               if( are_all_correct_answers_revealed(lessonID) ) {
                 document.getElementById('bottomNextLessonButtonContainer').hidden = false;
+                if( lessonID >= Object.keys(LESSONS).length ) {
+                  document.getElementById('bottomNextLessonButtonContainer').innerHTML = "<hr>You've reached the end!";
+                }
               }
             }
           });
