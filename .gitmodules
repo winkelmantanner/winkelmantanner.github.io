@@ -1,0 +1,3 @@
+[submodule "algebratool"]
+	path = algebratool
+	url = https://github.com/winkelmantanner/algebratool.git
