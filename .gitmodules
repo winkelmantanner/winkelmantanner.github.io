@@ -1,3 +1,6 @@
 [submodule "algebratool"]
 	path = algebratool
 	url = https://github.com/winkelmantanner/algebratool.git
+[submodule "mstMathPlacementExamPrep"]
+	path = mstMathPlacementExamPrep
+	url = https://github.com/winkelmantanner/mstMathPlacementExamPrep.git
