@@ -1,275 +1,69 @@
-<html xmlns:v="urn:schemas-microsoft-com:vml"
-xmlns:o="urn:schemas-microsoft-com:office:office"
-xmlns:x="urn:schemas-microsoft-com:office:excel"
-xmlns="http://www.w3.org/TR/REC-html40">
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Professors by Difficulty</title>
+    <meta name="description" content="My ratings of several Missouri S&T professors.  Very useful information for students.">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv=Content-Type content="text/html; charset=utf-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script type='text/javascript'>
+      function loadFile(filePath) {
+        var result = null;
+        var xmlhttp = new XMLHttpRequest();
+        xmlhttp.open("GET", filePath, false);
+        xmlhttp.send();
+        if (xmlhttp.status==200) {
+          result = xmlhttp.responseText;
+        }
+        return result;
+      }
 
-<head>
-  <title>Professors by Difficulty</title>
-  <meta name="description" content="My ratings of several Missouri S&T professors.  Very useful information for students.">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta http-equiv=Content-Type content="text/html; charset=utf-8">
-<meta name=ProgId content=Excel.Sheet>
-<meta name=Generator content="Microsoft Excel 15">
-<link rel=File-List href="ProfessorsInOrderOfDifficulty.fld/filelist.xml">
-<style>
-<!--table
-	{mso-displayed-decimal-separator:"\.";
-	mso-displayed-thousand-separator:"\,";}
-@page
-	{margin:.75in .7in .75in .7in;
-	mso-header-margin:.3in;
-	mso-footer-margin:.3in;}
-.style0
-	{mso-number-format:General;
-	text-align:general;
-	vertical-align:bottom;
-	white-space:nowrap;
-	mso-rotate:0;
-	mso-background-source:auto;
-	mso-pattern:auto;
-	color:black;
-	font-size:12.0pt;
-	font-weight:400;
-	font-style:normal;
-	text-decoration:none;
-	font-family:Calibri, sans-serif;
-	mso-font-charset:0;
-	border:none;
-	mso-protection:locked visible;
-	mso-style-name:Normal;
-	mso-style-id:0;}
-td
-	{mso-style-parent:style0;
-	padding-top:1px;
-	padding-right:1px;
-	padding-left:1px;
-	mso-ignore:padding;
-	color:black;
-	font-size:12.0pt;
-	font-weight:400;
-	font-style:normal;
-	text-decoration:none;
-	font-family:Calibri, sans-serif;
-	mso-font-charset:0;
-	mso-number-format:General;
-	text-align:general;
-	vertical-align:bottom;
-	border:none;
-	mso-background-source:auto;
-	mso-pattern:auto;
-	mso-protection:locked visible;
-	white-space:nowrap;
-	mso-rotate:0;}
-.xl65
-	{mso-style-parent:style0;
-	border:.5pt solid windowtext;}
-.xl66
-	{mso-style-parent:style0;
-	text-align:left;
-	border:.5pt solid windowtext;}
-.xl67
-	{mso-style-parent:style0;
-	mso-number-format:"0\.0";
-	text-align:left;
-	border:.5pt solid windowtext;}
--->
-</style>
-</head>
+      function get_part(line, index, index_of_last_comma) {
+        // pre: line[index] === ',' or index === line.length
+        let part = line.slice(index_of_last_comma + 1, index);
+        if(part[0] === '"' && part[part.length - 1] === '"') {
+          part = part.slice(1, part.length - 1);
+        }
+        return part;
+      }
 
-<body link="#0563C1" vlink="#954F72">
+      function parseCSVline(line) {
+        let inQuotes = false;
+        let parts = [];
+        let index_of_last_comma = -1;
+        line.split('').forEach((char, index) => {
+          if(char === '"') {
+            inQuotes = !inQuotes;
+          } else if(!inQuotes) {
+            if(char === ',') {
+              parts.push(get_part(line, index, index_of_last_comma));
+              index_of_last_comma = index;
+            }
+          }
+        });
+        if(line.length - 1 > index_of_last_comma) {
+          parts.push(get_part(line, line.length, index_of_last_comma));
+        }
+        return parts;
+      }
 
-<table border=0 cellpadding=0 cellspacing=0 width=2724 style='border-collapse:
- collapse;table-layout:fixed;width:2044pt'>
- <col width=297 style='mso-width-source:userset;mso-width-alt:9514;width:223pt'>
- <col width=376 style='mso-width-source:userset;mso-width-alt:12032;width:282pt'>
- <col width=581 style='mso-width-source:userset;mso-width-alt:18602;width:436pt'>
- <col width=421 style='mso-width-source:userset;mso-width-alt:13482;width:316pt'>
- <col width=560 style='mso-width-source:userset;mso-width-alt:17920;width:420pt'>
- <col width=489 style='mso-width-source:userset;mso-width-alt:15658;width:367pt'>
- <tr height=21 style='height:16.0pt'>
-  <td height=21 class=xl65 width=297 style='height:16.0pt;width:223pt'>Name of
-  Professor(s)</td>
-  <td class=xl65 width=376 style='border-left:none;width:282pt'>Difficulty
-  (10-most difficult, 1-least difficult)</td>
-  <td class=xl65 width=581 style='border-left:none;width:436pt'>How much I
-  learned per time in class (10-learned the most, 0-learned nothing)</td>
-  <td class=xl65 width=421 style='border-left:none;width:316pt'>Ratio of amount
-  learned to difficulty</td>
-  <td class=xl65 width=560 style='border-left:none;width:420pt'>Classes Taken</td>
-  <td class=xl65 width=489 style='border-left:none;width:367pt'>Other
-  Information</td>
- </tr>
- <tr height=21 style='height:16.0pt'>
-  <td height=21 class=xl65 style='height:16.0pt;border-top:none'>Patrick Taylor</td>
-  <td class=xl66 style='border-top:none;border-left:none'>10</td>
-  <td class=xl66 style='border-top:none;border-left:none'>5</td>
-  <td class=xl67 style='border-top:none;border-left:none'>0.5</td>
-  <td class=xl65 style='border-top:none;border-left:none'>CS3600 (dropped)</td>
-  <td class=xl65 style='border-top:none;border-left:none'>winkelmantanner.github.io/PT.html</td>
- </tr>
- <tr height=21 style='height:16.0pt'>
-  <td height=21 class=xl65 style='height:16.0pt;border-top:none'>Rachel
-  Schneider</td>
-  <td class=xl66 style='border-top:none;border-left:none'>9</td>
-  <td class=xl66 style='border-top:none;border-left:none'>1</td>
-  <td class=xl67 style='border-top:none;border-left:none'>0.1</td>
-  <td class=xl65 style='border-top:none;border-left:none'>Engl1120</td>
-  <td class=xl65 style='border-top:none;border-left:none'>Most evil person I
-  have ever known.</td>
- </tr>
- <tr height=21 style='height:16.0pt'>
-  <td height=21 class=xl65 style='height:16.0pt;border-top:none'>Robert Roe</td>
-  <td class=xl66 style='border-top:none;border-left:none'>9</td>
-  <td class=xl66 style='border-top:none;border-left:none'>10</td>
-  <td class=xl67 style='border-top:none;border-left:none'>1.1</td>
-  <td class=xl65 style='border-top:none;border-left:none'>Math3108</td>
-  <td class=xl65 style='border-top:none;border-left:none'>&nbsp;</td>
- </tr>
- <tr height=21 style='height:16.0pt'>
-  <td height=21 class=xl65 style='height:16.0pt;border-top:none'>Paul Runnion</td>
-  <td class=xl66 style='border-top:none;border-left:none'>8</td>
-  <td class=xl66 style='border-top:none;border-left:none'>8</td>
-  <td class=xl67 style='border-top:none;border-left:none'>1.0</td>
-  <td class=xl65 style='border-top:none;border-left:none'>Math1214</td>
-  <td class=xl65 style='border-top:none;border-left:none'>&nbsp;</td>
- </tr>
- <tr height=21 style='height:16.0pt'>
-  <td height=21 class=xl65 style='height:16.0pt;border-top:none'>James
-  Musser/Don Madison/Alan Pringle</td>
-  <td class=xl66 style='border-top:none;border-left:none'>8</td>
-  <td class=xl66 style='border-top:none;border-left:none'>6</td>
-  <td class=xl67 style='border-top:none;border-left:none'>0.8</td>
-  <td class=xl65 style='border-top:none;border-left:none'>Physics2135</td>
-  <td class=xl65 style='border-top:none;border-left:none'>The online lectures
-  were better than the in-class lectures.</td>
- </tr>
- <tr height=21 style='height:16.0pt'>
-  <td height=21 class=xl65 style='height:16.0pt;border-top:none'>Vu Ong</td>
-  <td class=xl66 style='border-top:none;border-left:none'>8</td>
-  <td class=xl66 style='border-top:none;border-left:none'>7</td>
-  <td class=xl67 style='border-top:none;border-left:none'>0.9</td>
-  <td class=xl65 style='border-top:none;border-left:none'>Math1215</td>
-  <td class=xl65 style='border-top:none;border-left:none'>Very intimidating,
-  but good.</td>
- </tr>
- <tr height=21 style='height:16.0pt'>
-  <td height=21 class=xl65 style='height:16.0pt;border-top:none'>Paul Hamilton</td>
-  <td class=xl66 style='border-top:none;border-left:none'>8</td>
-  <td class=xl66 style='border-top:none;border-left:none'>4</td>
-  <td class=xl67 style='border-top:none;border-left:none'>0.5</td>
-  <td class=xl65 style='border-top:none;border-left:none'>Philos3235</td>
-  <td class=xl65 style='border-top:none;border-left:none'>&nbsp;</td>
- </tr>
- <tr height=21 style='height:16.0pt'>
-  <td height=21 class=xl65 style='height:16.0pt;border-top:none'>Clayton Price</td>
-  <td class=xl66 style='border-top:none;border-left:none'>6</td>
-  <td class=xl66 style='border-top:none;border-left:none'>10</td>
-  <td class=xl67 style='border-top:none;border-left:none'>1.7</td>
-  <td class=xl65 style='border-top:none;border-left:none'>CS1570, CS5201</td>
-  <td class=xl65 style='border-top:none;border-left:none'>Awesome.<span
-  style='mso-spacerun:yes'>  </span>By far the most engaging lectures.</td>
- </tr>
- <tr height=21 style='height:16.0pt'>
-  <td height=21 class=xl65 style='height:16.0pt;border-top:none'>Dan Lin</td>
-  <td class=xl66 style='border-top:none;border-left:none'>6</td>
-  <td class=xl66 style='border-top:none;border-left:none'>4</td>
-  <td class=xl67 style='border-top:none;border-left:none'>0.7</td>
-  <td class=xl65 style='border-top:none;border-left:none'>CS2300</td>
-  <td class=xl65 style='border-top:none;border-left:none'>Don't believe
-  ratemyprofessor.com on Dan Lin.<span style='mso-spacerun:yes'>  </span>She
-  gave Lucas a B.</td>
- </tr>
- <tr height=21 style='height:16.0pt'>
-  <td height=21 class=xl65 style='height:16.0pt;border-top:none'>Agnes Vojta</td>
-  <td class=xl66 style='border-top:none;border-left:none'>6</td>
-  <td class=xl66 style='border-top:none;border-left:none'>7</td>
-  <td class=xl67 style='border-top:none;border-left:none'>1.2</td>
-  <td class=xl65 style='border-top:none;border-left:none'>Physics1135</td>
-  <td class=xl65 style='border-top:none;border-left:none'>&nbsp;</td>
- </tr>
- <tr height=21 style='height:16.0pt'>
-  <td height=21 class=xl65 style='height:16.0pt;border-top:none'>Fikret Ercal</td>
-  <td class=xl66 style='border-top:none;border-left:none'>6</td>
-  <td class=xl66 style='border-top:none;border-left:none'>5</td>
-  <td class=xl67 style='border-top:none;border-left:none'>0.8</td>
-  <td class=xl65 style='border-top:none;border-left:none'>CS3200</td>
-  <td class=xl65 style='border-top:none;border-left:none'>&nbsp;</td>
- </tr>
- <tr height=21 style='height:16.0pt'>
-  <td height=21 class=xl65 style='height:16.0pt;border-top:none'>Lei Huo</td>
-  <td class=xl66 style='border-top:none;border-left:none'>5</td>
-  <td class=xl66 style='border-top:none;border-left:none'>6</td>
-  <td class=xl67 style='border-top:none;border-left:none'>1.2</td>
-  <td class=xl65 style='border-top:none;border-left:none'>Stat3115</td>
-  <td class=xl65 style='border-top:none;border-left:none'>&nbsp;</td>
- </tr>
- <tr height=21 style='height:16.0pt'>
-  <td height=21 class=xl65 style='height:16.0pt;border-top:none'>Russel
-  Henderson</td>
-  <td class=xl66 style='border-top:none;border-left:none'>5</td>
-  <td class=xl66 style='border-top:none;border-left:none'>6</td>
-  <td class=xl67 style='border-top:none;border-left:none'>1.2</td>
-  <td class=xl65 style='border-top:none;border-left:none'>History1310</td>
-  <td class=xl65 style='border-top:none;border-left:none'>&nbsp;</td>
- </tr>
- <tr height=21 style='height:16.0pt'>
-  <td height=21 class=xl65 style='height:16.0pt;border-top:none'>Jennifer
-  Leopold</td>
-  <td class=xl66 style='border-top:none;border-left:none'>4</td>
-  <td class=xl66 style='border-top:none;border-left:none'>7</td>
-  <td class=xl67 style='border-top:none;border-left:none'>1.8</td>
-  <td class=xl65 style='border-top:none;border-left:none'>CS2200</td>
-  <td class=xl65 style='border-top:none;border-left:none'>&nbsp;</td>
- </tr>
- <tr height=21 style='height:16.0pt'>
-  <td height=21 class=xl65 style='height:16.0pt;border-top:none'>Chaman
-  Sabharwal</td>
-  <td class=xl66 style='border-top:none;border-left:none'>3</td>
-  <td class=xl66 style='border-top:none;border-left:none'>6</td>
-  <td class=xl67 style='border-top:none;border-left:none'>2.0</td>
-  <td class=xl65 style='border-top:none;border-left:none'>CS1200</td>
-  <td class=xl65 style='border-top:none;border-left:none'>&nbsp;</td>
- </tr>
- <tr height=21 style='height:16.0pt'>
-  <td height=21 class=xl65 style='height:16.0pt;border-top:none'>Jossalyn
-  Larson</td>
-  <td class=xl66 style='border-top:none;border-left:none'>3</td>
-  <td class=xl66 style='border-top:none;border-left:none'>7</td>
-  <td class=xl67 style='border-top:none;border-left:none'>2.3</td>
-  <td class=xl65 style='border-top:none;border-left:none'>Engl1160</td>
-  <td class=xl65 style='border-top:none;border-left:none'>&nbsp;</td>
- </tr>
- <tr height=21 style='height:16.0pt'>
-  <td height=21 class=xl65 style='height:16.0pt;border-top:none'>John Story</td>
-  <td class=xl66 style='border-top:none;border-left:none'>3</td>
-  <td class=xl66 style='border-top:none;border-left:none'>5</td>
-  <td class=xl67 style='border-top:none;border-left:none'>1.7</td>
-  <td class=xl65 style='border-top:none;border-left:none'>Physics1505</td>
-  <td class=xl65 style='border-top:none;border-left:none'>&nbsp;</td>
- </tr>
- <tr height=21 style='height:16.0pt'>
-  <td height=21 class=xl65 style='height:16.0pt;border-top:none'>Ricardo
-  Morales</td>
-  <td class=xl66 style='border-top:none;border-left:none'>2</td>
-  <td class=xl66 style='border-top:none;border-left:none'>8</td>
-  <td class=xl67 style='border-top:none;border-left:none'>4.0</td>
-  <td class=xl65 style='border-top:none;border-left:none'>CS1510(now 1575),
-  CS3500, CS5001(Intro to Deep Learning)</td>
-  <td class=xl65 style='border-top:none;border-left:none'>Best professor I
-  know.<span style='mso-spacerun:yes'>  </span>Take any class from Dr. Morales.</td>
- </tr>
- <tr height=21 style='height:16.0pt'>
-  <td height=21 class=xl65 style='height:16.0pt;border-top:none'>Mike Gosnell</td>
-  <td class=xl66 style='border-top:none;border-left:none'>2</td>
-  <td class=xl66 style='border-top:none;border-left:none'>5</td>
-  <td class=xl67 style='border-top:none;border-left:none'>2.5</td>
-  <td class=xl65 style='border-top:none;border-left:none'>CS2500, CS3100,
-  CS3800, CS5300</td>
-  <td class=xl65 style='border-top:none;border-left:none'>Easiest.<span
-  style='mso-spacerun:yes'>  </span>Although CS3800 was a little less easy.</td>
- </tr>
-</table>
-
-</body>
-
+      function onLoad() {
+        let fileContent = loadFile('ProfessorsInOrderOfDifficulty.csv');
+        lines = fileContent.split(/\r|\n/);
+        let isFirstLine = true;
+        document.getElementById('contentTable').innerHTML = lines.map(line => {
+          let tag = 'td';
+          if(isFirstLine) {
+            tag = 'th';
+          }
+          let html = '<tr>' + parseCSVline(line).map(part => '<' + tag + ' style="border: 1px solid black;">' + part + '</' + tag + '>').join('') + '</tr>';
+          isFirstLine = false;
+          return html;
+        }).join('\n');
+      }
+    </script>
+  </head>
+  <body onload="onLoad();">
+    <table id='contentTable'></table>
+  </body>
 </html>
