@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script>
+      let module = {};
+    </script>
+    <script src="data.js"></script>
+    <script src="coincidenceFinder.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script>
+
+      function run_search() {
+        const {
+          coincidences,
+          num_comparisons
+        } = find_coincidences();
+
+        clearResults();
+
+        const object_name_coincidence_counts = {};
+        for(const coincidence of coincidences) {
+          const row = document.createElement('tr');
+          const cell = document.createElement('td');
+          Object.keys(
+            [ coincidence.l_num.object_name,
+              coincidence.l_den.object_name,
+              coincidence.r_num.object_name,
+              coincidence.r_den.object_name
+            ].reduce((acc, name) => {
+              acc[name] = true;
+              return acc;
+            }, {})
+          ).forEach(object_name => {
+            object_name_coincidence_counts[object_name] = (object_name_coincidence_counts[object_name] || 0) + 1;
+          });
+          cell.textContent = "( " + coincidence.l_num.object_name + " " + coincidence.l_num.base_unit_attribute_key
+            + " / " + coincidence.l_den.object_name + " " + coincidence.l_den.base_unit_attribute_key + " ) = 10^"
+            + String(coincidence.base_unit_exponent) + " * ("
+            + coincidence.r_num.object_name + " " + coincidence.r_num.base_unit_attribute_key
+            + " / " + coincidence.r_den.object_name + " " + coincidence.r_den.base_unit_attribute_key + " )"
+            + "; error=" + String(coincidence.error);
+          row.appendChild(cell);
+          document.getElementById('coincidences').appendChild(row);
+        }
+        displaySummary(object_name_coincidence_counts, coincidences.length, num_comparisons);
+      }
+
+      function displaySummary(object_name_coincidence_counts, num_coincidences, num_comparisons) {
+        document.getElementById('summary').innerHTML =
+          "Number of comparisons checked: " + num_comparisons + "<br>"
+          + "Number of coincidences found: " + num_coincidences + " (this includes planet-only coincidences, which are reported once for each moon of the planet but are not counted in the moon coincidence count)<br>"
+          + "<table class='prettyBox'>"
+          + "<tr><th>Moon Name</th><th>Number of coincidences</th></tr>"
+          + moon_data.name.reduce(
+            (acc, name) =>
+              acc
+              + "<tr><td>" + name
+              + "</td><td>" + String(object_name_coincidence_counts[name] || 0)
+              + "</td></tr>"
+            ,
+            ""
+          )
+          + "</table>";
+      }
+
+      function setEnabled(field_key, enabled, header_cell) {
+        options.field_enabled[field_key] = enabled;
+        header_cell.style.backgroundColor = enabled ? 'white' : 'gray';
+      }
+
+      function populate_table(table_element_id, object_class, data_set) {
+        const table_element = document.getElementById(table_element_id);
+        const template_object = new object_class(data_set.name[0]);
+        let fields = Object.keys(template_object);
+        let header_row = document.createElement('tr');
+        for(const field of fields) {
+          const field_key = get_unique_field_key(table_element_id, field);
+          let header_cell = document.createElement('th');
+          header_cell.textContent = field;
+          if(typeof template_object[field].value === 'number') {
+            let checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.checked = (options.field_enabled[field_key] !== false);
+            setEnabled(field_key, checkbox.checked, header_cell);
+            checkbox.addEventListener('click', event => {
+              setEnabled(field_key, checkbox.checked, header_cell);
+            });
+            header_cell.appendChild(checkbox);
+          }
+          header_row.appendChild(header_cell);
+        }
+        table_element.appendChild(header_row);
+        for(const name of data_set.name) {
+          const data = new object_class(name);
+          let row = document.createElement('tr');
+          for(const field of fields) {
+            let cell = document.createElement('td');
+            cell.textContent = String(data[field].value);
+            row.appendChild(cell);
+          }
+          table_element.appendChild(row);
+        }
+      }
+
+      function handleShowDataClick(checkbox) {
+        document.getElementById('dataContainer').style.display = (checkbox.checked ? 'initial' : 'none');
+      }
+
+      function handleShowOptionsClick(checkbox) {
+        document.getElementById('optionsContainer').style.display = (checkbox.checked ? 'initial' : 'none');
+      }
+
+      function clearResults() {
+        document.getElementById('coincidences').innerHTML = '';
+        document.getElementById('summary').innerHTML = '';
+      }
+
+      function renderGeneratedOptions() {
+        for(const option_key in options) {
+          const option = options[option_key];
+          if('value' in option) {
+            const option_div = document.createElement('div');
+            option_div.className = 'prettyBox';
+            option_div.textContent = options[option_key].title;
+            const help_container = document.createElement('div');
+            help_container.textContent = option.description;
+            help_container.appendChild(document.createElement('br'));
+            help_container.style.display = 'none';
+            const help_button = document.createElement('button');
+            help_button.textContent = '?';
+            help_button.addEventListener('click', () => {
+              help_container.style.display = (help_container.style.display === 'none' ? 'initial' : 'none');
+            });
+            option_div.appendChild(help_button);
+            option_div.appendChild(document.createElement('br'));
+            option_div.appendChild(help_container);
+            const input_el = document.createElement('input');
+            const readout_el = document.createElement('div');
+            if(typeof option.value === 'boolean') {
+              input_el.type = 'checkbox';
+              input_el.checked = option.value;
+              input_el.addEventListener('click', event => {
+                option.value = event.target.checked;
+                readout_el.textContent = String(option.value);
+                clearResults();
+              });
+              readout_el.textContent = String(option.value);
+            } else if(typeof option.value === 'number') {
+              input_el.type = 'range';
+              input_el.style.width = '95%';
+              if(option.scale === LOGARITHMIC) {
+                input_el.min = 0;
+                input_el.max = 1;
+                input_el.step = 0.01;
+                input_el.value = Math.log(option.value / option.min) / Math.log(option.max / option.min);
+              } else if(option.scale === LINEAR) {
+                input_el.min = option.min;
+                input_el.max = option.max;
+                input_el.step = option.step;
+                input_el.value = option.value;
+              }
+              input_el.addEventListener('input', event => {
+                if(option.scale === LOGARITHMIC) {
+                  option.value = option.min * Math.pow(option.max / option.min, event.target.value);
+                } else if(option.scale === LINEAR) {
+                  option.value = event.target.value;
+                }
+                readout_el.textContent = String(option.value);
+                clearResults();
+              });
+              readout_el.textContent = String(option.value);
+            }
+            option_div.appendChild(input_el);
+            option_div.appendChild(readout_el);
+            document.getElementById('generatedOptionsContainer').appendChild(option_div);
+          }
+        }
+      }
+
+      function onLoad() {
+        options.field_enabled[get_unique_field_key('planets', 'perihelion (10^6 km)')] = false;
+        options.field_enabled[get_unique_field_key('planets', 'aphelion (10^6 km)')] = false;
+        options.field_enabled[get_unique_field_key('planets', 'rotation period (days)')] = false;
+        options.field_enabled[get_unique_field_key('planets', 'equatorial radius (km)')] = false;
+        options.field_enabled[get_unique_field_key('planets', 'equatorial diameter (km)')] = false;
+
+        populate_table("stars", Star, star_data);
+        populate_table("planets", Planet, planet_data);
+        populate_table("moons", Moon, moon_data);
+
+        renderGeneratedOptions();
+      }
+    </script>
+
+    <style>
+      td, th {
+        border: 1px solid black;
+      }
+      .prettyBox {
+        border: 2px solid black;
+        border-radius: 5px;
+        margin: 2px;
+      }
+    </style>
+
+  </head>
+  <body onload="onLoad();">
+    <h4>Background</h4>
+    <p>The moon is one of the most unique objects in the solar system.  None of the other inner terrestrial planets have a spherical moon.  It is currently accepted as a coincidence that the moon appears nearly the exact same size as the sun in the sky, making perfect eclipses possible.  But that is not the only coincidence associated with the moon.  The moon's orbital period is 27.32 days, 100 times the ratio of the moon's radius to earth's polar radius with relative error of about 0.0003.  Symmetrically, the earth's orbital period is 365.25 days, 100 times the ratio of the earth's polar radius to the moon's radius with relative error of 0.002.  Finally, absolute zero in celcius, which is based on the properties of water on the surface of earth, is -10 times the moon's orbital period in days with a relative error of 0.00024.  I don't think the moon could have occurred randomly since it shouldn't have been necessary for humans to evolve.</p>
+    <h4>What is this?</h4>
+    <p>This tool allows you to find and count coincidences in the major moons in the solar system.  Each moon's numbers will be related to each other and to the numbers of the planet and star.  The tool tries all possible dimensionally consistent ways of putting such numbers in an equation of the form (a/b)=(10^n)*(c/d) where n is any integer and a, b, c, and d are quantities describing the moon, planet, or star.  The tool reports the equivalence as a coincidence if the error is below the error threshold, which you can control in the options.  Please click around.</p>
+    <h4>Findings</h4>
+    <p>The moon does not have significantly more coincidences than other moons in the solar system, but the symmetry between coincidences is significant.  Also, there are very few coincidences with error as small as 0.00024.  Interestingly, Titan, the moon with the most interesting surface, had more coincidences than any other moon in the solar system even though the surface is not expected to effect the number of coincidences.</p>
+    <h4>The Tool</h4>
+    <div id='options'>
+      <input type='checkbox' id='showOptionsCheckbox' onclick='handleShowOptionsClick(this)'>
+      <label for='showOptionsCheckbox'>Show options</label>
+      <div id='optionsContainer' style='display: none;'>
+        <div class="prettyBox">
+          <h4>Options</h4>
+          <div id='generatedOptionsContainer'></div>
+        </div>
+      </div>
+      <br>
+      <input type='checkbox' id='showDataCheckbox' onclick='handleShowDataClick(this)'>
+      <label for='showDataCheckbox'>Show source data</label>
+      <div id='dataContainer' style='display: none;'>
+        <div class="prettyBox">
+          <h4>Data</h4>
+          <div style='margin: 10px'>
+          A data point will only be considered if its checkbox is checked.<br>
+          For values with more than 10 significant figures, the precision is false.  Values with less than 10 significant figures have exactly the same value as a value in NASA's fact sheets or another online source.
+          </div>
+          <div class='prettyBox'>
+            <h4>Stars</h4>
+            <table id='stars'></table>
+          </div>
+          <div class='prettyBox'>
+            <h4>Planets</h4>
+            <table id='planets'></table>
+          </div>
+          <div class='prettyBox'>
+            <h4>Moons</h4>
+            <table id='moons'></table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <button onclick='run_search()'>Search for Coincidences</button>
+    <div id='summary' class='prettyBox'></div>
+    <table id='coincidences' class='prettyBox'></table>
+  </body>
+</html>
+
+
