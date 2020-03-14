@@ -8,8 +8,34 @@
     </script>
     <script src="data.js"></script>
     <script src="coincidenceFinder.js"></script>
+    <script src='Chart.bundle.min.js'></script>
+    <script src='grapher.js'></script>
+    <script src='bode_solver.js'></script>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
     <script>
+
+      // https://stackoverflow.com/questions/979975/how-to-get-the-value-from-the-get-parameters
+      function parse_query_string(query) {
+        var vars = query.split("&");
+        var query_string = {};
+        for (var i = 0; i < vars.length; i++) {
+          var pair = vars[i].split("=");
+          var key = decodeURIComponent(pair[0]);
+          var value = decodeURIComponent(pair[1]);
+          // If first entry with this name
+          if (typeof query_string[key] === "undefined") {
+            query_string[key] = decodeURIComponent(value);
+          }
+        }
+        return query_string;
+      }
+
+      // const MOON_SIGNIFICANCE_ANALYZER = 'moonSignificanceAnalyzer';
+      const BODES_SOLVER = 'bodesSolver';
+      let tool = parse_query_string(window.location.search.substring(1)).tool;
+      // if( tool === undefined ) {
+      //   tool = MOON_SIGNIFICANCE_ANALYZER;
+      // }
 
       function run_search() {
         const {
@@ -179,7 +205,7 @@
         }
       }
 
-      function onLoad() {
+      function setupMoonSignificanceAnalyzer() {
         options.field_enabled[get_unique_field_key('planets', 'perihelion (10^6 km)')] = false;
         options.field_enabled[get_unique_field_key('planets', 'aphelion (10^6 km)')] = false;
         options.field_enabled[get_unique_field_key('planets', 'rotation period (days)')] = false;
@@ -191,6 +217,15 @@
         populate_table("moons", Moon, moon_data);
 
         renderGeneratedOptions();
+      }
+
+      function onLoad() {
+        if(tool === BODES_SOLVER) {
+          document.getElementById('moonSignificanceAnalyzerContainer').style.display = 'none';
+          putBodesSolverInDiv(document.getElementById('bode_stuff'));
+        } else {
+          setupMoonSignificanceAnalyzer();
+        }
       }
     </script>
 
@@ -207,51 +242,54 @@
 
   </head>
   <body onload="onLoad();">
-    <h4>Background</h4>
-    <p>The moon is one of the most unique objects in the solar system.  None of the other inner terrestrial planets have a spherical moon.  It is currently accepted as a coincidence that the moon appears nearly the exact same size as the sun in the sky, making perfect eclipses possible.  But that is not the only coincidence associated with the moon.  The moon's orbital period is 27.32 days, 100 times the ratio of the moon's radius to earth's polar radius with relative error of about 0.0003.  Symmetrically, the earth's orbital period is 365.25 days, 100 times the ratio of the earth's polar radius to the moon's radius with relative error of 0.002.  Finally, absolute zero in celcius, which is based on the properties of water on the surface of earth, is -10 times the moon's orbital period in days with a relative error of 0.00024.  I don't think the moon could have occurred randomly since it shouldn't have been necessary for humans to evolve.</p>
-    <h4>What is this?</h4>
-    <p>This tool allows you to find and count coincidences in the major moons in the solar system.  Each moon's numbers will be related to each other and to the numbers of the planet and star.  The tool tries all possible dimensionally consistent ways of putting such numbers in an equation of the form (a/b)=(10^n)*(c/d) where n is any integer and a, b, c, and d are quantities describing the moon, planet, or star.  The tool reports the equivalence as a coincidence if the error is below the error threshold, which you can control in the options.  Please click around.</p>
-    <h4>Findings</h4>
-    <p>The moon does not have significantly more coincidences than other moons in the solar system, but the symmetry between coincidences is significant.  Also, there are very few coincidences with error as small as 0.00024.  Interestingly, Titan, the moon with the most interesting surface, had more coincidences than any other moon in the solar system even though the surface is not expected to effect the number of coincidences.</p>
-    <h4>The Tool</h4>
-    <div id='options'>
-      <input type='checkbox' id='showOptionsCheckbox' onclick='handleShowOptionsClick(this)'>
-      <label for='showOptionsCheckbox'>Show options</label>
-      <div id='optionsContainer' style='display: none;'>
-        <div class="prettyBox">
-          <h4>Options</h4>
-          <div id='generatedOptionsContainer'></div>
-        </div>
-      </div>
-      <br>
-      <input type='checkbox' id='showDataCheckbox' onclick='handleShowDataClick(this)'>
-      <label for='showDataCheckbox'>Show source data</label>
-      <div id='dataContainer' style='display: none;'>
-        <div class="prettyBox">
-          <h4>Data</h4>
-          <div style='margin: 10px'>
-          A data point will only be considered if its checkbox is checked.<br>
-          For values with more than 10 significant figures, the precision is false.  Values with less than 10 significant figures have exactly the same value as a value in NASA's fact sheets or another online source.
-          </div>
-          <div class='prettyBox'>
-            <h4>Stars</h4>
-            <table id='stars'></table>
-          </div>
-          <div class='prettyBox'>
-            <h4>Planets</h4>
-            <table id='planets'></table>
-          </div>
-          <div class='prettyBox'>
-            <h4>Moons</h4>
-            <table id='moons'></table>
+    <div id='moonSignificanceAnalyzerContainer'>
+      <h4>Background</h4>
+      <p>The moon is one of the most unique objects in the solar system.  None of the other inner terrestrial planets have a spherical moon.  It is currently accepted as a coincidence that the moon appears nearly the exact same size as the sun in the sky, making perfect eclipses possible.  But that is not the only coincidence associated with the moon.  The moon's orbital period is 27.32 days, 100 times the ratio of the moon's radius to earth's polar radius with relative error of about 0.0003.  Symmetrically, the earth's orbital period is 365.25 days, 100 times the ratio of the earth's polar radius to the moon's radius with relative error of 0.002.  Finally, absolute zero in celcius, which is based on the properties of water on the surface of earth, is -10 times the moon's orbital period in days with a relative error of 0.00024.  I don't think the moon could have occurred randomly since it shouldn't have been necessary for humans to evolve.</p>
+      <h4>What is this?</h4>
+      <p>This tool allows you to find and count coincidences in the major moons in the solar system.  Each moon's numbers will be related to each other and to the numbers of the planet and star.  The tool tries all possible dimensionally consistent ways of putting such numbers in an equation of the form (a/b)=(10^n)*(c/d) where n is any integer and a, b, c, and d are quantities describing the moon, planet, or star.  The tool reports the equivalence as a coincidence if the error is below the error threshold, which you can control in the options.  Please click around.</p>
+      <h4>Findings</h4>
+      <p>The moon does not have significantly more coincidences than other moons in the solar system, but the symmetry between coincidences is significant.  Also, there are very few coincidences with error as small as 0.00024.  Interestingly, Titan, the moon with the most interesting surface, had more coincidences than any other moon in the solar system even though the surface is not expected to effect the number of coincidences.</p>
+      <h4>The Tool</h4>
+      <div id='options'>
+        <input type='checkbox' id='showOptionsCheckbox' onclick='handleShowOptionsClick(this)'>
+        <label for='showOptionsCheckbox'>Show options</label>
+        <div id='optionsContainer' style='display: none;'>
+          <div class="prettyBox">
+            <h4>Options</h4>
+            <div id='generatedOptionsContainer'></div>
           </div>
         </div>
-      </div>
+        <br>
+        <input type='checkbox' id='showDataCheckbox' onclick='handleShowDataClick(this)'>
+        <label for='showDataCheckbox'>Show source data</label>
+        <div id='dataContainer' style='display: none;'>
+          <div class="prettyBox">
+            <h4>Data</h4>
+            <div style='margin: 5px'>
+              A data point will only be considered if its checkbox is checked.<br>
+              For values with more than 10 significant figures, the precision is false.  Values with less than 10 significant figures have exactly the same value as a value in NASA's fact sheets or another online source.
+            </div>
+            <div class='prettyBox'>
+              <h4>Stars</h4>
+              <table id='stars'></table>
+            </div>
+            <div class='prettyBox'>
+              <h4>Planets</h4>
+              <table id='planets'></table>
+            </div>
+            <div class='prettyBox'>
+              <h4>Moons</h4>
+              <table id='moons'></table>
+            </div>
+          </div>
+        </div>
 
+      </div>
+      <button onclick='run_search()'>Search for Coincidences</button>
+      <div id='summary' class='prettyBox'></div>
+      <table id='coincidences' class='prettyBox'></table>
     </div>
-    <button onclick='run_search()'>Search for Coincidences</button>
-    <div id='summary' class='prettyBox'></div>
-    <table id='coincidences' class='prettyBox'></table>
+    <div id='bode_stuff'></div>
   </body>
 </html>
 
