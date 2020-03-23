@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/astro-tools/static/css/main.5ecd60fb.chunk.css",
+    "main.js": "/astro-tools/static/js/main.4a79cb35.chunk.js",
+    "main.js.map": "/astro-tools/static/js/main.4a79cb35.chunk.js.map",
+    "runtime-main.js": "/astro-tools/static/js/runtime-main.06328a1e.js",
+    "runtime-main.js.map": "/astro-tools/static/js/runtime-main.06328a1e.js.map",
+    "static/js/2.8a1446b4.chunk.js": "/astro-tools/static/js/2.8a1446b4.chunk.js",
+    "static/js/2.8a1446b4.chunk.js.map": "/astro-tools/static/js/2.8a1446b4.chunk.js.map",
+    "index.html": "/astro-tools/index.html",
+    "precache-manifest.58d711cc0696374cd252d100756f96bc.js": "/astro-tools/precache-manifest.58d711cc0696374cd252d100756f96bc.js",
+    "service-worker.js": "/astro-tools/service-worker.js",
+    "static/css/main.5ecd60fb.chunk.css.map": "/astro-tools/static/css/main.5ecd60fb.chunk.css.map",
+    "static/js/2.8a1446b4.chunk.js.LICENSE.txt": "/astro-tools/static/js/2.8a1446b4.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.06328a1e.js",
+    "static/js/2.8a1446b4.chunk.js",
+    "static/css/main.5ecd60fb.chunk.css",
+    "static/js/main.4a79cb35.chunk.js"
+  ]
+}
