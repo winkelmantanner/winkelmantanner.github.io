@@ -140,21 +140,21 @@ const MERCURY_SEMIMAJOR_AXIS_AU = 57.9 / 149.6;
 
 
 
-const solution_without_mercury = solveBodes(SOLAR_SYSTEM_SEMIMAJOR_AXES_AU);
-console.log("Solution without Mercury");
-console.log(solution_without_mercury.toString());
-for(const planet_index in SOLAR_SYSTEM_SEMIMAJOR_AXES_AU) {
-  console.log(solution_without_mercury.getPrediction(planet_index), SOLAR_SYSTEM_SEMIMAJOR_AXES_AU[planet_index]);
-}
-console.log(solution_without_mercury.constant, MERCURY_SEMIMAJOR_AXIS_AU);
+// const solution_without_mercury = solveBodes(SOLAR_SYSTEM_SEMIMAJOR_AXES_AU);
+// console.log("Solution without Mercury");
+// console.log(solution_without_mercury.toString());
+// for(const planet_index in SOLAR_SYSTEM_SEMIMAJOR_AXES_AU) {
+//   console.log(solution_without_mercury.getPrediction(planet_index), SOLAR_SYSTEM_SEMIMAJOR_AXES_AU[planet_index]);
+// }
+// console.log(solution_without_mercury.constant, MERCURY_SEMIMAJOR_AXIS_AU);
 
-const solution_with_mercury = solveBodes(SOLAR_SYSTEM_SEMIMAJOR_AXES_AU, MERCURY_SEMIMAJOR_AXIS_AU);
-console.log("Solution giving -Infinity to Mercury");
-console.log(solution_with_mercury.toString());
-for(const planet_index in SOLAR_SYSTEM_SEMIMAJOR_AXES_AU) {
-  console.log(solution_with_mercury.getPrediction(planet_index), SOLAR_SYSTEM_SEMIMAJOR_AXES_AU[planet_index]);
-}
-console.log(solution_with_mercury.constant, MERCURY_SEMIMAJOR_AXIS_AU);
+// const solution_with_mercury = solveBodes(SOLAR_SYSTEM_SEMIMAJOR_AXES_AU, MERCURY_SEMIMAJOR_AXIS_AU);
+// console.log("Solution giving -Infinity to Mercury");
+// console.log(solution_with_mercury.toString());
+// for(const planet_index in SOLAR_SYSTEM_SEMIMAJOR_AXES_AU) {
+//   console.log(solution_with_mercury.getPrediction(planet_index), SOLAR_SYSTEM_SEMIMAJOR_AXES_AU[planet_index]);
+// }
+// console.log(solution_with_mercury.constant, MERCURY_SEMIMAJOR_AXIS_AU);
 
 function el(type) {
   return document.createElement(type);
@@ -170,7 +170,7 @@ const INFO_HTML =
     "<h4 style='margin-top: 15px'>Background</h4>"
   + "The Titius-Bode law (or Titus-Bode rule) relates the semimajor axes of the planets in our solar system.  The semimajor axis of an orbit is half of the longest dimension of the orbit, and is a good approximation to the average distance from the orbiting object to the orbited object unless the orbit is highly elliptical.  The Titius-Bode rule says that <br>semimajor axis = <table style='display: inline;'><tr><td style='border: none; border-bottom:solid black 1px;'>(4 + (3 * 2<sup>n</sup>))</td></tr><tr><td style='border: none; text-align: center;'>10</td>​</tr></table> * semimajor axis of earth<br>where n is an integer associated with the planet.  The ratio can be simplified to 0.4 + (0.3 * 2<sup>n</sup>).  n is consecutive for Venus through Uranus.  n is negative infinity for Mercury.  Note that the largest asteroid, Ceres, must be used for n=3.<br>The Titius-Bode rule was formulated like this in the 1700s.  There is a lot of error is this rule, and Neptune does not follow this rule.  I was curious how accurate the original formulation is, given that it uses only integers."
   + "<h4 style='margin-top: 15px'>What is this tool?</h4>"
-  + "This tool finds the best values of a, b, and c to match the semimajor axes with this equation: semimajor axis = a + (b<sup>n</sup> + c).  You can enter the semimajor axes and it will find the best values of a, b, and c.  There are also buttons to automatically enter the data from the solar system and TRAPPIST-1, an exoplanet system with 7 known planets.  If you click the solar system button, it will include Pluto as the planet for n=7.  Most astronomers would probably exclude Pluto since is is not like the 8 generally accepted planets, but it actually works well if Pluto takes n=7 and Neptune is excluded.  This program uses a computational search for a and logarithmic regression for b and c."
+  + "This tool finds the best values of a, b, and c to match the semimajor axes with this equation: semimajor axis = a + (b<sup>n</sup> * c).  You can enter the semimajor axes and it will find the best values of a, b, and c.  There are also buttons to automatically enter the data from the solar system and TRAPPIST-1, an exoplanet system with 7 known planets.  If you click the solar system button, it will include Pluto as the planet for n=7.  Most astronomers would probably exclude Pluto since it is not like the 8 generally accepted planets, but it actually works well if Pluto takes n=7 and Neptune is excluded.  This program uses a computational search for a and logarithmic regression for b and c."
   + "<h4 style='margin-top: 15px'>Findings</h4>"
   + "For our solar system, if both Pluto and Neptune are excluded, the best solution is 0.3935 + (0.3117 * 1.972<sup>n</sup>).  If Pluto is included, the best solution is 0.3970 + (0.3054 * 1.9876<sup>n</sup>), much closer to the original formulation.  With TRAPPIST-1, the base of the exponential is only about 1.2 rather than 2.<br><br>";
 
