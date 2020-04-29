@@ -38,12 +38,30 @@ const options = {
   include_ratios_close_to_1: {
     value: false,
     title: "Include Ratios Close To 1",
-    description: "If one of the ratios of two quantities is close to 1, it is likely that the quantities are expected to be very close or equal to each other.  For example, it is expected that Pluto's orbital period is equal to Charon's orbital period since Pluto and Charon are mutually tidally locked.  With this box checked, if either of the divisions in the equation (a/b)=(10^n)*(c/d) is close to 1, the coincidence will not be reported.  This tool considers a ratio close to 1 if abs(ln(ratio)) < " + String(CLOSENESS_TO_1_THRESHOLD) + "."
+    description: "If one of the ratios of two quantities is close to 1, it is likely that the quantities are expected to be very close or equal to each other.  For example, it is expected that Pluto's orbital period is equal to Charon's orbital period since Pluto and Charon are mutually tidally locked.  Without this box checked, if either of the divisions in the equation (a/b)=(10^n)*(c/d) is close to 1, the coincidence will not be reported.  This tool considers a ratio close to 1 if abs(ln(ratio)) < " + String(CLOSENESS_TO_1_THRESHOLD) + "."
   },
   allow_zero_error: {
     value: false,
     title: "Allow Zero Error",
     description: "If the error is exactly 0, then it is probably not a coincidence but expected.  For example, this is expected with zero error: (moon radius / moon diameter) = (planet radius / planet diameter).  Coincidences with zero error will be reported only if this box is checked."
+  },
+  include_planet_only_coincidences: {
+    value: true,
+    title: "Include Planet-Only Coincidences",
+    description: "If a coincidence does not involve a value from a moon, I call it a planet-only coincidence.  Planet-only coincidences will be filtered out if this is unchecked."
+  },
+  generate_random_objects: {
+    value: false,
+    title: "Generate Random Objects",
+    description: "If this box is checked, random stars, planets, and moons will be generated based on real data.  They follow the naming convention ddddd-name where each d is a digit and name is the name of an object in our solar system.  The data is computed by taking the numbers from the named moon and multiplying each one by exp(r - 0.5) where r is a random number between 0 and 1.  Some attributes that are related to each other are then computed based on other attributes (for example, length of day is computed from rotation period and orbital period).  The purpose of random generation is to get a more accurate percentile for each number of coincidences."
+  },
+  num_random_moons_to_generate: {
+    value: 100,
+    title: "Number of Random Moons to Generate",
+    description: "This only does anything if the \"Generate Random Objects\" checkbox is checked.  If that box is checked, this number of random moons will be generated.  If this is too large, the computation will take time.  If this is too small, the numbers will not be accurate.",
+    max: 10000,
+    min: 1,
+    scale: LOGARITHMIC
   },
   field_enabled: {} // keys should be gotten by get_unique_field_key
 };
@@ -78,87 +96,95 @@ function push_usable_enabled_attributes(usable_data, object, table_element_id) {
   }
 }
 
-function find_coincidences() {
+const MOONS_TABLE_ELEMENT_ID = 'moons';
+const PLANETS_TABLE_ELEMENT_ID = 'planets';
+const STARS_TABLE_ELEMENT_ID = 'stars';
+
+function find_coincidences_for_moon(moon, planet, star) {
   const coincidences = [];
   let num_comparisons = 0;
-  for(const moon_name of moon_data.name) {
-    const moon = new Moon(moon_name);
-    const planet = new Planet(moon.planet.value);
-    const star = new Star(planet.star.value);
 
-    const error_values = [];
+  const error_values = [];
+  const usable_data = [];
 
-    const usable_data = [];
+  push_usable_enabled_attributes(usable_data, moon, MOONS_TABLE_ELEMENT_ID);
+  push_usable_enabled_attributes(usable_data, planet, PLANETS_TABLE_ELEMENT_ID);
+  push_usable_enabled_attributes(usable_data, star, STARS_TABLE_ELEMENT_ID);
 
-    push_usable_enabled_attributes(usable_data, moon, 'moons');
-    push_usable_enabled_attributes(usable_data, planet, 'planets');
-    push_usable_enabled_attributes(usable_data, star, 'stars');
+  for(let l_num_index = 0; l_num_index < usable_data.length; l_num_index++) {
+    for(let r_num_index = 1 + l_num_index; r_num_index < usable_data.length; r_num_index++) {
+      for(let l_den_index = 0; l_den_index < usable_data.length; l_den_index++) {
+        for(let r_den_index = 0; r_den_index < usable_data.length; r_den_index++) {
+          if(  l_num_index !== r_num_index
+            && l_num_index !== l_den_index
+            && r_num_index !== r_den_index
+            && l_den_index !== r_den_index
+          ) {
+            const l_num = usable_data[l_num_index];
+            const l_den = usable_data[l_den_index];
+            const r_num = usable_data[r_num_index];
+            const r_den = usable_data[r_den_index];
 
-    for(let l_num_index = 0; l_num_index < usable_data.length; l_num_index++) {
-      for(let r_num_index = 1 + l_num_index; r_num_index < usable_data.length; r_num_index++) {
-        for(let l_den_index = 0; l_den_index < usable_data.length; l_den_index++) {
-          for(let r_den_index = 0; r_den_index < usable_data.length; r_den_index++) {
-            if(  l_num_index !== r_num_index
-              && l_num_index !== l_den_index
-              && r_num_index !== r_den_index
-              && l_den_index !== r_den_index
-            ) {
-              const l_num = usable_data[l_num_index];
-              const l_den = usable_data[l_den_index];
-              const r_num = usable_data[r_num_index];
-              const r_den = usable_data[r_den_index];
-              if(!options.require_dimensional_consistency.value
+            const is_planet_only = !([l_num, l_den, r_num, r_den].some(obj => obj.table_element_id === MOONS_TABLE_ELEMENT_ID));
+            if(
+              (
+                !options.require_dimensional_consistency.value
                 || (
                   l_num.base_unit === l_den.base_unit
                   && r_num.base_unit === r_den.base_unit
                 )
+              )
+              &&
+              (
+                !is_planet_only
+                || options.include_planet_only_coincidences.value
+              )
+            ) {
+              const l_base_unit_value = l_num.base_unit_value / l_den.base_unit_value;
+              const r_base_unit_value = r_num.base_unit_value / r_den.base_unit_value;
+
+              // eliminate stuff like (aphelion)/(semimajor axis) and (rotation period)/(length of day) 
+              if(options.include_ratios_close_to_1.value
+                || (
+                  Math.abs(Math.log(Math.abs(l_base_unit_value))) > CLOSENESS_TO_1_THRESHOLD
+                  && Math.abs(Math.log(Math.abs(r_base_unit_value))) > CLOSENESS_TO_1_THRESHOLD
+                )
               ) {
-                const l_base_unit_value = l_num.base_unit_value / l_den.base_unit_value;
-                const r_base_unit_value = r_num.base_unit_value / r_den.base_unit_value;
+                let abs_ratio = Math.abs(l_base_unit_value / r_base_unit_value);
 
-                // eliminate stuff like (aphelion)/(semimajor axis) and (rotation period)/(length of day) 
-                if(options.include_ratios_close_to_1.value
-                  || (
-                    Math.abs(Math.log(Math.abs(l_base_unit_value))) > CLOSENESS_TO_1_THRESHOLD
-                    && Math.abs(Math.log(Math.abs(r_base_unit_value))) > CLOSENESS_TO_1_THRESHOLD
+                let n = 0;
+
+                while(abs_ratio > 5) {
+                  abs_ratio /= 10;
+                  n++;
+                }
+                while(abs_ratio < 0.2) {
+                  abs_ratio *= 10;
+                  n--;
+                }
+
+                num_comparisons++;
+
+                const error = Math.abs(Math.log(Math.abs(abs_ratio)));
+
+                if(
+                  (
+                    error !== 0 // error !== 0 eliminates coincidences caused by duplicate values
+                    || options.allow_zero_error.value
                   )
+                  && error < options.error_threshold.value
+                  && Math.abs(n) <= options.max_exponent_magnitude.value
                 ) {
-                  let abs_ratio = Math.abs(l_base_unit_value / r_base_unit_value);
-
-                  let n = 0;
-
-                  while(abs_ratio > 5) {
-                    abs_ratio /= 10;
-                    n++;
-                  }
-                  while(abs_ratio < 0.2) {
-                    abs_ratio *= 10;
-                    n--;
-                  }
-
-                  num_comparisons++;
-
-                  const error = Math.abs(Math.log(Math.abs(abs_ratio)));
-
-                  if(
-                    (
-                      error !== 0 // error !== 0 eliminates coincidences caused by duplicate values
-                      || options.allow_zero_error.value
-                    )
-                    && error < options.error_threshold.value
-                    && Math.abs(n) <= options.max_exponent_magnitude.value
-                  ) {
-                    let is_duplicate = false;
-                    for(const e_val of error_values) {
-                      if(Math.abs(Math.log(e_val / error)) < options.duplicate_threshold.value) {
-                        // if they have the same error value, then they are probably duplicate coincidences
-                        is_duplicate = true;
-                      }
+                  let is_duplicate = false;
+                  for(const e_val of error_values) {
+                    if(Math.abs(Math.log(e_val / error)) < options.duplicate_threshold.value) {
+                      // if they have the same error value, then they are probably duplicate coincidences
+                      is_duplicate = true;
                     }
-                    if(!is_duplicate) {
-                      coincidences.push({l_num, l_den, r_num, r_den, base_unit_exponent: n, error});
-                      error_values.push(error);
-                    }
+                  }
+                  if(!is_duplicate) {
+                    coincidences.push({l_num, l_den, r_num, r_den, base_unit_exponent: n, error, moon_name: moon.name.value});
+                    error_values.push(error);
                   }
                 }
               }
@@ -168,7 +194,64 @@ function find_coincidences() {
       }
     }
   }
+
   return {coincidences, num_comparisons};
+}
+
+function find_coincidences() {
+  const all_coincidences = [];
+  let total_num_comparisons = 0;
+  for(const moon_name of moon_data.name) {
+    const moon = new Moon(moon_name);
+    const planet = new Planet(moon.planet.value);
+    const star = new Star(planet.star.value);
+
+    const {
+      coincidences,
+      num_comparisons
+    } = find_coincidences_for_moon(moon, planet, star);
+
+    coincidences.forEach(c => {
+      all_coincidences.push(c);
+    });
+    total_num_comparisons += num_comparisons;
+  }
+  const randomly_generated_moons = [];
+  const randomly_generated_planets = [];
+  const randomly_generated_stars = [];
+  if(options.generate_random_objects.value === true) {
+    let star;
+    let planet;
+    for(let k = 0; k < options.num_random_moons_to_generate.value; k++) {
+      if(star === undefined || Math.random() < 0.1) {
+        star = Star.getRandom();
+        randomly_generated_stars.push(star);
+      }
+      if(planet === undefined || Math.random() < 0.25) {
+        planet = Planet.getRandom(star);
+        randomly_generated_planets.push(planet);
+      }
+      const moon = Moon.getRandom(planet);
+      randomly_generated_moons.push(moon);
+
+      const {
+        coincidences,
+        num_comparisons
+      } = find_coincidences_for_moon(moon, planet, star);
+
+      coincidences.forEach(c => {
+        all_coincidences.push(c);
+      });
+      total_num_comparisons += num_comparisons;
+    }
+  }
+  return {
+    coincidences: all_coincidences,
+    num_comparisons: total_num_comparisons,
+    randomly_generated_moons,
+    randomly_generated_planets,
+    randomly_generated_stars
+  };
 }
 
 

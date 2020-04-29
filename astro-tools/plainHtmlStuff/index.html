@@ -38,57 +38,121 @@
       //   tool = MOON_SIGNIFICANCE_ANALYZER;
       // }
 
+      function el(type) {
+        return document.createElement(type);
+      }
+      function getFractionBar(numerator_text, denominator_text) {
+        const table = el('table');
+        const numerator = el('tr');
+        const n_td = el('td');
+        n_td.style.border = "none";
+        n_td.style.borderBottom = "solid black 1px";
+        n_td.style.textAlign = "center";
+        n_td.textContent = numerator_text;
+        numerator.appendChild(n_td);
+        const denominator = el('tr');
+        const d_td = el('td');
+        d_td.style.border = "none";
+        d_td.style.textAlign = "center";
+        d_td.textContent = denominator_text;
+        denominator.appendChild(d_td);
+        table.appendChild(numerator);
+        table.appendChild(denominator);
+        return table;
+      }
       function run_search() {
         const {
           coincidences,
-          num_comparisons
+          num_comparisons,
+          randomly_generated_moons,
+          randomly_generated_planets,
+          randomly_generated_stars
         } = find_coincidences();
+
+        populate_table("stars", Star, star_data, randomly_generated_stars);
+        populate_table("planets", Planet, planet_data, randomly_generated_planets);
+        populate_table("moons", Moon, moon_data, randomly_generated_moons);
 
         clearResults();
 
         const object_name_coincidence_counts = {};
+        for(const moon_name of moon_data.name) {
+          object_name_coincidence_counts[moon_name] = 0;
+        }
+        for(const moon of randomly_generated_moons) {
+          object_name_coincidence_counts[moon.name.value] = 0;
+        }
         for(const coincidence of coincidences) {
           const row = document.createElement('tr');
           const cell = document.createElement('td');
-          Object.keys(
-            [ coincidence.l_num.object_name,
-              coincidence.l_den.object_name,
-              coincidence.r_num.object_name,
-              coincidence.r_den.object_name
-            ].reduce((acc, name) => {
-              acc[name] = true;
-              return acc;
-            }, {})
-          ).forEach(object_name => {
-            object_name_coincidence_counts[object_name] = (object_name_coincidence_counts[object_name] || 0) + 1;
-          });
-          cell.textContent = "( " + coincidence.l_num.object_name + " " + coincidence.l_num.base_unit_attribute_key
-            + " / " + coincidence.l_den.object_name + " " + coincidence.l_den.base_unit_attribute_key + " ) = 10^"
-            + String(coincidence.base_unit_exponent) + " * ("
-            + coincidence.r_num.object_name + " " + coincidence.r_num.base_unit_attribute_key
-            + " / " + coincidence.r_den.object_name + " " + coincidence.r_den.base_unit_attribute_key + " )"
-            + "; error=" + String(coincidence.error);
+          cell.style.display = 'flex';
+          cell.style.justifyContent = 'center';
+          cell.style.alignItems = 'center';
+          const moon_name = coincidence.moon_name;
+          object_name_coincidence_counts[moon_name] = (object_name_coincidence_counts[moon_name] || 0) + 1;
+
+          cell.appendChild(getFractionBar(
+            coincidence.l_num.object_name + " " + coincidence.l_num.base_unit_attribute_key,
+            coincidence.l_den.object_name + " " + coincidence.l_den.base_unit_attribute_key
+          ));
+          const middle_stuff = el('div');
+          middle_stuff.textContent = " = 10^" + String(coincidence.base_unit_exponent) + " *";
+          middle_stuff.style.margin = "5px";
+          cell.appendChild(middle_stuff);
+          cell.appendChild(getFractionBar(
+            coincidence.r_num.object_name + " " + coincidence.r_num.base_unit_attribute_key,
+            coincidence.r_den.object_name + " " + coincidence.r_den.base_unit_attribute_key
+          ));
+          const end_stuff = el('div');
+          end_stuff.textContent = "; error=" + coincidence.error.toPrecision(3);
+          end_stuff.style.margin = "5px";
+          cell.appendChild(end_stuff);
+
           row.appendChild(cell);
           document.getElementById('coincidences').appendChild(row);
         }
         displaySummary(object_name_coincidence_counts, coincidences.length, num_comparisons);
       }
 
+      function getRowHtmlOfMoonName(name, object_name_coincidence_counts, lower_tile_by_coincidence_count, upper_tile_by_coincidence_count) {
+        return "<tr><td>" + name
+          + "</td><td>" + String(object_name_coincidence_counts[name] || 0)
+          + "</td><td>" + (lower_tile_by_coincidence_count[object_name_coincidence_counts[name]] * 100).toPrecision(3) + "%"
+          + "</td><td>" + (upper_tile_by_coincidence_count[object_name_coincidence_counts[name]] * 100).toPrecision(3) + "%"
+          + "</td></tr>";
+      }
       function displaySummary(object_name_coincidence_counts, num_coincidences, num_comparisons) {
+        const lower_tile_by_coincidence_count = {};
+        const upper_tile_by_coincidence_count = {};
+        let max_num_coincidences = 0;
+        const object_count_by_coincidence_count = {};
+        for(const key in object_name_coincidence_counts) {
+          const coincidence_count = object_name_coincidence_counts[key];
+          object_count_by_coincidence_count[coincidence_count] = (object_count_by_coincidence_count[coincidence_count] || 0) + 1;
+          if(coincidence_count > max_num_coincidences) {
+            max_num_coincidences = coincidence_count;
+          }
+        }
+        let current_object_count = 0;
+        for(const k in object_count_by_coincidence_count) {
+          lower_tile_by_coincidence_count[k] = current_object_count / Object.keys(object_name_coincidence_counts).length;
+          current_object_count += object_count_by_coincidence_count[k];
+          upper_tile_by_coincidence_count[k] = current_object_count / Object.keys(object_name_coincidence_counts).length;
+        }
         document.getElementById('summary').innerHTML =
           "Number of comparisons checked: " + num_comparisons + "<br>"
-          + "Number of coincidences found: " + num_coincidences + " (this includes planet-only coincidences, which are reported once for each moon of the planet but are not counted in the moon coincidence count)<br>"
+          + "Number of coincidences found: " + num_coincidences + "<br>"
           + "<table class='prettyBox'>"
-          + "<tr><th>Moon Name</th><th>Number of coincidences</th></tr>"
-          + moon_data.name.reduce(
-            (acc, name) =>
-              acc
-              + "<tr><td>" + name
-              + "</td><td>" + String(object_name_coincidence_counts[name] || 0)
-              + "</td></tr>"
-            ,
-            ""
-          )
+          + "<tr><th>Moon Name</th><th>Number of coincidences</th><th>Lower Percentile</th><th>Upper Percentile</th></tr>"
+          + moon_data.name.map(
+            name => getRowHtmlOfMoonName(name, object_name_coincidence_counts, lower_tile_by_coincidence_count, upper_tile_by_coincidence_count)
+          ).concat(
+            Object.keys(object_name_coincidence_counts)
+              .filter(name => moon_data.name.indexOf(name) === -1)
+              .map(
+                name => getRowHtmlOfMoonName(name, object_name_coincidence_counts, lower_tile_by_coincidence_count, upper_tile_by_coincidence_count)
+              )
+          ).join('')
           + "</table>";
       }
 
@@ -97,8 +161,27 @@
         header_cell.style.backgroundColor = enabled ? 'white' : 'gray';
       }
 
-      function populate_table(table_element_id, object_class, data_set) {
+      function put_row_in_data_table(
+        table_element,
+        object,
+        fields
+      ) {
+        let row = document.createElement('tr');
+        for(const field of fields) {
+          let cell = document.createElement('td');
+          cell.textContent = String(object[field].value);
+          row.appendChild(cell);
+        }
+        table_element.appendChild(row);
+      }
+      function populate_table(
+        table_element_id,
+        object_class,
+        data_set,
+        randomly_generated_objects=[]
+      ) {
         const table_element = document.getElementById(table_element_id);
+        table_element.innerHTML = "";
         const template_object = new object_class(data_set.name[0]);
         let fields = Object.keys(template_object);
         let header_row = document.createElement('tr');
@@ -120,14 +203,19 @@
         }
         table_element.appendChild(header_row);
         for(const name of data_set.name) {
-          const data = new object_class(name);
-          let row = document.createElement('tr');
-          for(const field of fields) {
-            let cell = document.createElement('td');
-            cell.textContent = String(data[field].value);
-            row.appendChild(cell);
-          }
-          table_element.appendChild(row);
+          const object = new object_class(name);
+          put_row_in_data_table(
+            table_element,
+            object,
+            fields
+          );
+        }
+        for(const object of randomly_generated_objects) {
+          put_row_in_data_table(
+            table_element,
+            object,
+            fields
+          );
         }
       }
 
@@ -142,6 +230,11 @@
       function clearResults() {
         document.getElementById('coincidences').innerHTML = '';
         document.getElementById('summary').innerHTML = '';
+      }
+      function setDataTablesToDefaultData() {
+        populate_table("stars", Star, star_data);
+        populate_table("planets", Planet, planet_data);
+        populate_table("moons", Moon, moon_data);
       }
 
       function renderGeneratedOptions() {
@@ -172,6 +265,7 @@
                 option.value = event.target.checked;
                 readout_el.textContent = String(option.value);
                 clearResults();
+                setDataTablesToDefaultData();
               });
               readout_el.textContent = String(option.value);
             } else if(typeof option.value === 'number') {
@@ -196,6 +290,7 @@
                 }
                 readout_el.textContent = String(option.value);
                 clearResults();
+                setDataTablesToDefaultData();
               });
               readout_el.textContent = String(option.value);
             }
@@ -213,9 +308,7 @@
         options.field_enabled[get_unique_field_key('planets', 'equatorial radius (km)')] = false;
         options.field_enabled[get_unique_field_key('planets', 'equatorial diameter (km)')] = false;
 
-        populate_table("stars", Star, star_data);
-        populate_table("planets", Planet, planet_data);
-        populate_table("moons", Moon, moon_data);
+        setDataTablesToDefaultData();
 
         renderGeneratedOptions();
       }
@@ -245,11 +338,11 @@
   <body onload="onLoad();">
     <div id='moonSignificanceAnalyzerContainer'>
       <h4>Background</h4>
-      <p>The moon is one of the most unique objects in the solar system.  None of the other inner terrestrial planets have a spherical moon.  It is currently accepted as a coincidence that the moon appears nearly the exact same size as the sun in the sky, making perfect eclipses possible.  But that is not the only coincidence associated with the moon.  The moon's orbital period is 27.32 days, 100 times the ratio of the moon's radius to earth's polar radius with relative error of about 0.0003.  Symmetrically, the earth's orbital period is 365.25 days, 100 times the ratio of the earth's polar radius to the moon's radius with relative error of 0.002.  Finally, absolute zero in celcius, which is based on the properties of water on the surface of earth, is -10 times the moon's orbital period in days with a relative error of 0.00024.  I don't think the moon could have occurred randomly since it shouldn't have been necessary for humans to evolve.</p>
+      <p>The moon is one of the most unique objects in the solar system.  None of the other inner terrestrial planets have a spherical moon.  It is currently accepted as a coincidence that the moon appears nearly the exact same size as the sun in the sky, making perfect eclipses possible.  But that is not the only coincidence associated with the moon.  The moon's orbital period is 27.32 days, 100 times the ratio of the moon's radius to earth's polar radius with relative error of about 0.0003.  Symmetrically, the earth's orbital period is 365.25 days, 100 times the ratio of the earth's polar radius to the moon's radius with relative error of 0.002.  Finally, absolute zero in celcius, which is based on the properties of water on the surface of earth, is -10 times the moon's orbital period in days with a relative error of 0.00025.</p>
       <h4>What is this?</h4>
-      <p>This tool allows you to find and count coincidences in the major moons in the solar system.  Each moon's numbers will be related to each other and to the numbers of the planet and star.  The tool tries all possible dimensionally consistent ways of putting such numbers in an equation of the form (a/b)=(10^n)*(c/d) where n is any integer and a, b, c, and d are quantities describing the moon, planet, or star.  The tool reports the equivalence as a coincidence if the error is below the error threshold, which you can control in the options.  Please click around.</p>
+      <p>This tool allows you to find and count coincidences in the major moons in the solar system, as well as compare them to randomly generated moons with the same set of attributes.  Each moon's numbers will be related to the numbers of the moon, planet, and star.  This tool tries all possible dimensionally consistent ways of putting such numbers in an equation of the form (a/b)=(10^n)*(c/d) where n is any integer and a, b, c, and d are quantities describing the moon, planet, or star.  This tool reports the equivalence as a coincidence if the error is below the error threshold, which you can control in the options.  There is also a checkbox to see the data that is used.  You can control which physical attributes are considered.  Please click around.</p>
       <h4>Findings</h4>
-      <p>The moon does not have significantly more coincidences than other moons in the solar system, but the symmetry between coincidences is significant.  Also, there are very few coincidences with error as small as 0.00024.  Interestingly, Titan, the moon with the most interesting surface, had more coincidences than any other moon in the solar system even though the surface is not expected to effect the number of coincidences.</p>
+      <p>The moon has a relatively high number of decimal coincidences in its physical attributes with almost all settings of this tool.  But the moon's number of coincidences is not high enough to be improbable.  I have not yet been able to measure the probability of the absolute zero in celcius coincidence or <a href="https://www.goldennumber.net/wp-content/uploads/2012/05/Earth-Moon-Phi.gif">some other coincidences</a>.</p>
       <h4>The Tool</h4>
       <div id='options'>
         <input type='checkbox' id='showOptionsCheckbox' onclick='handleShowOptionsClick(this)'>
@@ -268,7 +361,8 @@
             <h4>Data</h4>
             <div style='margin: 5px'>
               A data point will only be considered if its checkbox is checked.<br>
-              For values with more than 10 significant figures, the precision is false.  Values with less than 10 significant figures have exactly the same value as a value in NASA's fact sheets or another online source.
+              Note that polar and equatorial of both diameter and radius are in the planet table.  You may have to scroll right.<br>
+              This data comes from NASA's fact sheets or another online source.  Some of these numbers are calculated.
             </div>
             <div class='prettyBox'>
               <h4>Stars</h4>
