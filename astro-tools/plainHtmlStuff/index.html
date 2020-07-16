@@ -76,20 +76,50 @@
         clearResults();
 
         const object_name_coincidence_counts = {};
+        const object_name_symmetry_pair_counts = {};
         for(const moon_name of moon_data.name) {
           object_name_coincidence_counts[moon_name] = 0;
+          object_name_symmetry_pair_counts[moon_name] = 0;
         }
         for(const moon of randomly_generated_moons) {
           object_name_coincidence_counts[moon.name.value] = 0;
+          object_name_symmetry_pair_counts[moon.name.value] = 0;
         }
+
+        let last_iteration_moon_name = null;
         for(const coincidence of coincidences) {
+
+          const moon_name = coincidence.moon_name;
+          // If the moon name changed
+          if(moon_name !== last_iteration_moon_name) {
+            // Add a row with just the moon name.
+            const r = el('tr');
+            const c = el('td');
+            c.textContent = moon_name;
+            c.style.fontSize = "20pt";
+            r.appendChild(c);
+            document.getElementById('coincidences').appendChild(r);
+            last_iteration_moon_name = moon_name;
+          }
+
           const row = document.createElement('tr');
           const cell = document.createElement('td');
           cell.style.display = 'flex';
           cell.style.justifyContent = 'center';
           cell.style.alignItems = 'center';
-          const moon_name = coincidence.moon_name;
           object_name_coincidence_counts[moon_name] = (object_name_coincidence_counts[moon_name] || 0) + 1;
+          if(
+            coincidence.symmetricCoincidences !== undefined
+            && coincidence.symmetricCoincidences.length >= 1
+          ) {
+            console.log(coincidence);
+            object_name_symmetry_pair_counts[moon_name] += coincidence.symmetricCoincidences.length / 2;
+          }
+
+          const beginning_stuff = el('div');
+          beginning_stuff.textContent = String(coincidence.index) + ";";
+          beginning_stuff.style.flex = 1;
+          cell.appendChild(beginning_stuff);
 
           cell.appendChild(getFractionBar(
             coincidence.l_num.object_name + " " + coincidence.l_num.base_unit_attribute_key,
@@ -103,25 +133,38 @@
             coincidence.r_num.object_name + " " + coincidence.r_num.base_unit_attribute_key,
             coincidence.r_den.object_name + " " + coincidence.r_den.base_unit_attribute_key
           ));
+          const semicolon = el('span');
+          semicolon.textContent = ';';
+          cell.appendChild(semicolon);
+
           const end_stuff = el('div');
-          end_stuff.textContent = "; error=" + coincidence.error.toPrecision(3);
+          end_stuff.style.flex = 2;
+          end_stuff.style.textAlign = "right";
+          end_stuff.textContent = "error=" + coincidence.error.toPrecision(3);
+          if(coincidence.symmetricCoincidences.length >= 1) {
+            end_stuff.appendChild(el('br'));
+            const sym_span = el('span');
+            sym_span.textContent = "symmetric to: " + coincidence.symmetricCoincidences.join(',');
+            end_stuff.appendChild(sym_span);
+          }
           end_stuff.style.margin = "5px";
           cell.appendChild(end_stuff);
 
           row.appendChild(cell);
           document.getElementById('coincidences').appendChild(row);
         }
-        displaySummary(object_name_coincidence_counts, coincidences.length, num_comparisons);
+        displaySummary(object_name_coincidence_counts, object_name_symmetry_pair_counts, coincidences.length, num_comparisons);
       }
 
-      function getRowHtmlOfMoonName(name, object_name_coincidence_counts, lower_tile_by_coincidence_count, upper_tile_by_coincidence_count) {
+      function getRowHtmlOfMoonName(name, object_name_coincidence_counts, object_name_symmetry_pair_counts, lower_tile_by_coincidence_count, upper_tile_by_coincidence_count, number_of_symmetry_pairs) {
         return "<tr><td>" + name
           + "</td><td>" + String(object_name_coincidence_counts[name] || 0)
           + "</td><td>" + (lower_tile_by_coincidence_count[object_name_coincidence_counts[name]] * 100).toPrecision(3) + "%"
           + "</td><td>" + (upper_tile_by_coincidence_count[object_name_coincidence_counts[name]] * 100).toPrecision(3) + "%"
+          + "</td><td>" + String(object_name_symmetry_pair_counts[name] || 0)
           + "</td></tr>";
       }
-      function displaySummary(object_name_coincidence_counts, num_coincidences, num_comparisons) {
+      function displaySummary(object_name_coincidence_counts, object_name_symmetry_pair_counts, num_coincidences, num_comparisons) {
         const lower_tile_by_coincidence_count = {};
         const upper_tile_by_coincidence_count = {};
         let max_num_coincidences = 0;
@@ -143,14 +186,14 @@
           "Number of comparisons checked: " + num_comparisons + "<br>"
           + "Number of coincidences found: " + num_coincidences + "<br>"
           + "<table class='prettyBox'>"
-          + "<tr><th>Moon Name</th><th>Number of coincidences</th><th>Lower Percentile</th><th>Upper Percentile</th></tr>"
+          + "<tr><th>Moon Name</th><th>Number of coincidences</th><th>Lower Percentile</th><th>Upper Percentile</th><th>Number of Symmetric Coincidence Pairs</th></tr>"
           + moon_data.name.map(
-            name => getRowHtmlOfMoonName(name, object_name_coincidence_counts, lower_tile_by_coincidence_count, upper_tile_by_coincidence_count)
+            name => getRowHtmlOfMoonName(name, object_name_coincidence_counts, object_name_symmetry_pair_counts, lower_tile_by_coincidence_count, upper_tile_by_coincidence_count)
           ).concat(
             Object.keys(object_name_coincidence_counts)
               .filter(name => moon_data.name.indexOf(name) === -1)
               .map(
-                name => getRowHtmlOfMoonName(name, object_name_coincidence_counts, lower_tile_by_coincidence_count, upper_tile_by_coincidence_count)
+                name => getRowHtmlOfMoonName(name, object_name_coincidence_counts, object_name_symmetry_pair_counts, lower_tile_by_coincidence_count, upper_tile_by_coincidence_count)
               )
           ).join('')
           + "</table>";

@@ -195,6 +195,35 @@ function find_coincidences_for_moon(moon, planet, star) {
     }
   }
 
+  for(let i = 0; i < coincidences.length; i++) {
+    coincidences[i].symmetricCoincidences = [];
+    coincidences[i].index = i;
+  }
+  for(let i1 = 0; i1 < coincidences.length; i1++) {
+    const c1 = coincidences[i1];
+    const c1_counts = {};
+    for(const position of ['l_num', 'l_den', 'r_num', 'r_den']) {
+      const k = c1[position].object_name + " " + c1[position].base_unit_attribute_key;
+      c1_counts[k] = (c1_counts[k] || 0) + 1;
+    }
+    for(let i2 = i1 + 1; i2 < coincidences.length; i2++) {
+      const c2 = coincidences[i2];
+      let overlapping_field_count = 0;
+      if(Math.abs(c1.base_unit_exponent) === Math.abs(c2.base_unit_exponent)) {
+        for(const position of ['l_num', 'l_den', 'r_num', 'r_den']) {
+          const k = c2[position].object_name + " " + c2[position].base_unit_attribute_key;
+          if(k in c1_counts) {
+            overlapping_field_count++;
+          }
+        }
+      }
+      if(overlapping_field_count >= 3) {
+        c2.symmetricCoincidences.push(i1);
+        c1.symmetricCoincidences.push(i2);
+      }
+    }
+  }
+
   return {coincidences, num_comparisons};
 }
 
