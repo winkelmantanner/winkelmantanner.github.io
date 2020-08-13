@@ -12,7 +12,8 @@
       }
       function collectData() {
         try {
-          const n = 10*1000/DELAY; // 10 seconds of data
+          const NUM_SECONDS = 5;
+          const n = NUM_SECONDS*1000/DELAY;
           data.push({timestamp: Date.now(), a, b, c, sum_of_abs: Math.abs(a) + Math.abs(b) + Math.abs(c)});
           document.getElementById("row").innerHTML = "";
           const start = Math.max(0, data.length - n);
@@ -43,8 +44,10 @@
           if(data.length >= 1 + n) {
             document.getElementById('messages').innerHTML = "";
             document.getElementById("freqs").innerHTML = "";
+            const signal = [];
             const complex_array = new ComplexArray(n).map((value, i) => {
               value.real = data[data.length - n + i].sum_of_abs - data[data.length - n + i - 1].sum_of_abs;
+              signal.push(value.real);
             });
             complex_array.FFT();
             const fft_result = Array(n / 2).fill(true).map((_, index) => {
@@ -57,12 +60,16 @@
                 max_fft_val = fft_result[k];
               }
             }
-            // document.getElementById('messages').textContent = JSON.stringify(complex_array.toString());
+            document.getElementById('messages').textContent = JSON.stringify(myFFT(signal, DELAY / 1000));
             for(let k = 0; k < n/2; k++) {
               const q = el('div');
               q.style.height = String(Math.floor(100 * fft_result[k] / max_fft_val)) + "%";
               q.style.flex = 1;
               q.style.backgroundColor = 'purple';
+              if(k % 10 === 0) {
+                q.innerHTML = (String(k / n * 1000 / DELAY) + "Hz").split("").join("<br>");
+                q.style.overflow = "hidden";
+              }
               document.getElementById("freqs").appendChild(q);
             }
           }
@@ -118,7 +125,26 @@
 
 
 
-
+function myFFT(signal, delta_t) {
+  // signal: an array of Numbers
+  // delta_t: Number; the amount of time between readings in signal
+  // returns: object; a map from frequency (casted to String) to intensity.
+  //   If delta_t is in time unit T, then each frequency is in time unit 1/T.
+  //   eg. If delta_t is in seconds, each frequency will be in hertz.
+  //   I am pretty sure the frequencies are correct, but I do not know how to verify the intensity values.
+  const complex_array = new ComplexArray(signal.length).map((value, i) => {
+    value.real = signal[i];
+  });
+  complex_array.FFT();
+  const fft_result = Array(signal.length / 2).fill(true).map((_, index) => {
+    return 2 * Math.sqrt(Math.pow(complex_array.real[index], 2) + Math.pow(complex_array.imag[index], 2));
+  });
+  const result = {};
+  for(let k = 0; k < fft_result.length; k++) {
+    result[k * 1.0 / signal.length / delta_t] = fft_result[k];
+  }
+  return result;
+}
 
 
 
