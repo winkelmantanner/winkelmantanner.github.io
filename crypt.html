@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Tanner Winkelman</title>
+    <meta name="description" content="Simple crypto tool.  I trust it since I made it.">
+    <meta name="keywords" content="Tanner,Winkelman,GitHub,site">
+    <meta name="author" content="Tanner Winkelman">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
+    <script>
+      const SEPARATOR = '%'; // % is not allowed in base64 so I can use it to separate base64 strings
+
+      function getInputAndPassword() {
+        return {
+          input: document.getElementById("input").value,
+          password: document.getElementById("password").value
+        };
+      }
+      function encrypt() {
+        const {input, password} = getInputAndPassword();
+        const encrypted = CryptoJS.AES.encrypt(input, password);
+        const ciphertext = encrypted.ciphertext.toString(CryptoJS.enc.Base64);
+        const salt = encrypted.salt.toString(CryptoJS.enc.Base64);
+        document.getElementById("output").value = [salt, ciphertext].join(SEPARATOR);
+      }
+      function decrypt() {
+        const {input, password} = getInputAndPassword();
+        const [salt, ciphertext] = input.split(SEPARATOR);
+        const decrypted = CryptoJS.AES.decrypt(
+          {
+            ciphertext: CryptoJS.enc.Base64.parse(ciphertext),
+            salt: CryptoJS.enc.Base64.parse(salt)
+          },
+          password
+        );
+        document.getElementById("output").value = decrypted.toString(CryptoJS.enc.Utf8);
+      }
+    </script>
+  </head>
+  <body>
+    <div class="container">
+      This page is a simple crypto tool using CryptoJS.AES.<br />
+      Input:
+      <textarea style="width: 100%;" id="input"></textarea>
+      Password: <input type="password" style="width: 100%;" id="password"></textarea>
+      <button onclick="encrypt();">ENCRYPT</button>
+      <button onclick="decrypt();">DECRYPT</button>
+      <br />
+      Output:
+      <textarea style="width: 100%;" id="output"></textarea>
+    </div>
+  </body>
+</html>
