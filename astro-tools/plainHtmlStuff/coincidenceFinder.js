@@ -53,7 +53,7 @@ const options = {
   generate_random_objects: {
     value: false,
     title: "Generate Random Objects",
-    description: "If this box is checked, random stars, planets, and moons will be generated based on real data.  They follow the naming convention ddddd-name where each d is a digit and name is the name of an object in our solar system.  The data is computed by taking the numbers from the named moon and multiplying each one by exp(r - 0.5) where r is a random number between 0 and 1.  Some attributes that are related to each other are then computed based on other attributes (for example, length of day is computed from rotation period and orbital period).  The purpose of random generation is to get a more accurate percentile for each number of coincidences."
+    description: "If this box is checked, random stars, planets, and moons will be generated based on real data.  They follow the naming convention ddddd-name where each d is a digit and name is the name of an object in our solar system.  The data is computed by taking the numbers from the named object and multiplying each number by exp(r - 0.5) where r is a random number between 0 and 1.  Then some attributes are computed based on other attributes (for example, length of day is computed from rotation period and orbital period).  The purpose of random generation is to get a more accurate percentile for each number of coincidences.  However, I am not confident that the random generation works perfectly.  While developing this, I fixed multiple issues that were causing higher percentiles for real objects.  It is likely that some of such issues still exist."
   },
   num_random_moons_to_generate: {
     value: 100,
