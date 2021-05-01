@@ -33,9 +33,9 @@ def getProbabilityByCalculation(include_both_poles, N):
     for rank in range(1, 1 + NUM_STARS_LIMIT):
         max_dist_from_pole = (POLARIS_RANK * (r_p ** N) / rank) ** (1.0 / N)
         area_within_max_dist = 2 * math.pi * (1 - math.cos(max_dist_from_pole))
+        if include_both_poles:
+            area_within_max_dist *= 2
         p_not *= 1 - (area_within_max_dist / (4 * math.pi))
-    if include_both_poles:
-        p_not *= p_not
     return 1 - p_not
 
 
