@@ -43,8 +43,6 @@ function _getLineOrBarGraph(graph_type_string, data_lists, dataset_labels, datas
 
   })
 
-  Chart.defaults.global.legend.labels.usePointStyle = true;
-
   const myChart = new Chart(ctx, {
       type: graph_type_string,
       data: {
@@ -53,21 +51,19 @@ function _getLineOrBarGraph(graph_type_string, data_lists, dataset_labels, datas
       },
       options: {
           scales: {
-              yAxes: [{
-                  ticks: {
-                      beginAtZero: true,
-                  },
-                  scaleLabel: {
+              y: {
+                  beginAtZero: true,
+                  title: {
                     display: true,
-                    labelString: vertical_axis_label
+                    text: vertical_axis_label
                   }
-              }],
-              xAxes: [{
-                  scaleLabel: {
+              },
+              x: {
+                  title: {
                     display: true,
-                    labelString: horizontal_axis_label
+                    text: horizontal_axis_label
                   }
-              }]
+              }
           }
       }
   });
