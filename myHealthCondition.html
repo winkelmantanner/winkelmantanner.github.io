@@ -42,17 +42,27 @@
         <img src="heartRateAndPropranolol.png" height="500px" style="border: 2px solid rgb(127,127,127)" title="heart rate graph" alt="heart rate graph" />
       </p>
       <p>
-        <h2>Foods</h2>
-        I have also found that what I eat has little effect on my health other than making me vomit sometimes.  Some foods have statistically significant correlations:
-        <ul>
-          <li>I tend to not eat apples on Saturdays (p=0.003).  Since I tend to have attacks on Sundays, this caused a correlation between apples and attacks that led me to investigate apples as a dietary treatment for my condition.  But when I did day-of-week analysis, I found that this was caused by a day-of-week trend.</li>
-          <li>The day before I eat potatoes, I tend to have less head pain. (p=0.005).  Potatoes do not have any day-of-week correlation.</li>
-        </ul>
-        If nutrition made a difference, I would expect many correlations that I do not see.
+        <h2>Amitriptyline</h2>
+        To anyone taking amitriptyline here is my warning: the withdrawal was 100 times as severe as starting the medication.  It is far more difficult to stop this medication than start it.
       </p>
       <p>
-        <h2>Amitriptyline</h2>
-        This is the only medication that I know caused side effects.  To anyone taking this medication here is my warning: the withdrawal was 100 times as severe as starting the medication.  It is far more difficult to stop this medication than start it.
+        <h2>Escitalpram (Lexapro)</h2>
+        I asked my doctor for this medication, and they prescribed it.  Escitalpram is a safer antidepressant than amitriptyline.  I usually took one 10mg pill before going to bed in the evening.
+        <br />
+        Here is what I know about escitralopram's effects on me:
+        <ul>
+          <li><strong>Escitalpram causes insomnia.</strong>  I thought escitralopram was not affecting me until I looked at the output from one of my python programs called <i>offset_spearman.py</i>.  This program uses <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.stats.spearmanr.html">scipy.stats.spearmanr</a> to get the <a href="https://en.wikipedia.org/wiki/Charles_Spearman">Spearman correlation coefficient and p-value</a> between numerous pairs of attributes with one attribute shifted by a number of days called the offset.  The program tries offset values -1, 0, 1, and 2.  I have been recording an integer called sleepdifficulty every day.  Between 2021-07-01 and 2021-10-01, the spearman correlation coefficient between taking escitalopram in the evening and sleepdifficulty on that night was <strong>0.38</strong>, with p-value <strong>0.0002</strong>.  None of the other day offsets had a significant p-value.</li>
+          <li><strong>Escitalpram causes nausea.</strong>  For this, I searched my records for the words "nausea" and "vomit" (I often wrote that I "feel like vomiting").  I created a column of integers based on my text records.  Between 2021-07-01 and 2021-10-01, the spearman correlation coefficient between taking escitalopram in the evening and nausea the next day was <strong>0.35</strong>, with p-value <strong>0.0006</strong>.  None of the other day offsets have a significant p-value.</li>
+        </ul>
+        The following graph shows the data used for these findings.  Escitalopram and sleepdifficulty are counted on the day following the event.
+        <br />
+        <img src="escitalopramGraph.png" height="400px" style="border: 2px solid rgb(127,127,127)" title="escitralopram graph" alt="escitralopram graph" />
+        <br />
+        Escitalopram did not correlate significantly with any metric of my headache condition.
+      </p>
+      <p>
+        <h2>Foods</h2>
+        Every day I record a list of foods I eat.  I use a python program to analyze this data.  As of 2021-10-02, there are no noteworthy correlations between the troublesomeness of my condition and any of more than 50 foods.
       </p>
       <p>
         <h2>Conclusion</h2>
