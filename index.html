@@ -11,15 +11,37 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <style>
+      fieldset {
+        border: 1px solid black;
+      }
+      legend {
+        width: auto;
+        margin: 0px 20px;
+        border: none;
+        padding: 0px 3px;
+      }
+    </style>
   </head>
   <body>
     <div class="container">
       <h3 style="margin-bottom: 20px;">Tanner Winkelman</h3>
-      <div style="margin: 10px;"><a href="myHealthCondition.html">About my health condition</a></div>
-      <div style="margin: 10px;"><a href="astro-tools/">Some tools I built for analyzing astronomical coincidences</a></div>
-      <div style="margin: 10px;"><a href='algebratool/'>My tool for doing algebra</a></div>
-      <div style="margin: 10px;"><a href='mstMathPlacementExamPrep/'>A collection of practice exams for the Missouri S&T Math Placement Test</a></div>
-      <div style="margin: 10px;"><a href="https://winkelmantanner.herokuapp.com">Check out this game I made (it takes time for Heroku to wake up)</a></div>
+      <fieldset>
+        <legend>Tools</legend>
+        <ul>
+          <li><a href="algebratool/">My tool for doing algebra</a></li>
+          <li><a href="crypt.html">My simple text encryption tool</a></li>
+          <li><a href="astro-tools/">Some tools I built for analyzing astronomical coincidences</a></li>
+        </ul>
+      </fieldset>
+      <fieldset>
+        <legend>Other</legend>
+        <ul>
+          <li><a href="myHealthCondition.html">About my health condition</a></li>
+          <li><a href='mstMathPlacementExamPrep/'>A collection of practice exams for the Missouri S&T Math Placement Test</a></li>
+          <li><a href="https://winkelmantanner.herokuapp.com">Check out this game I made (it takes time for Heroku to wake up)</a></li>
+        </ul>
+      </fieldset>
     </div>
   </body>
 </html>
