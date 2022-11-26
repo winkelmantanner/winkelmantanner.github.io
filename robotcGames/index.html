@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>RobotC Games In Browser</title>
+  <meta name="description" content="This page allows you to run RobotC for Lego Mindstorms NXT in the web browser.">
+  <script src="Translator.js"></script>
+  <script src="script.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
+
+
+
+  <script type="text/html" class="gameCardHtml">
+    <div class="card mb-4">
+      <img class="card-img-top img-fluid" src="images/{{{gameTitle}}}.png" alt="Image of {{{gameTitle}}} gameplay">
+      <div class="card-body">
+        <h5 class="card-title">{{{gameTitle}}}.c</h5>
+      </div>
+    </div>
+  </script>
+
+
+  <script type="text/html" class="gameInfoHtml" data-game="Dogfight NXT!A">
+    <p>A platform fighting game similar to Super Smash Bros.  You fight 1-vs-3 against 3 AIs, each with the same abilities, health, and number of lives as you.  It takes skill to win this unbalanced fight!</p>
+    <p>According to filesystem timestamps, this RobotC file was created 2012-01-10 and last modified 2013-04-12</p>
+    <h4>Controls</h4>
+    <ul>
+      <li>Side NXT buttons - move left and right</li>
+      <li>Orange NXT button - jump, and double jump.  The ability to double jump is regained when you stand on something.</li>
+      <li>Touch sensor - attack.  Each attack has a 5-second cooldown, indicated by a number displayed on the screen.  In this order, here are the attacks:</li>
+      <ul>
+        <li>side + touch sensor - Side attack</li>
+        <li>nothing + touch sensor - Projectile attack</li>
+        <li>orange + touch sensor - Up attack</li>
+        <li>dark grey + touch sensor - Down attack</li>
+      </ul>
+    </ul>
+    <h4>Other Notes</h4>
+    <p>There are 4 arenas.  The area to the right of the rightmost menu line will always be "locked".</p>
+  </script>
+
+  <script type="text/html" class="gameInfoHtml" data-game="XD thing!">
+    <p>A platformer that randomly generates the world as you go.  Collect as many XDs as you can without falling off.</p>
+    <p>According to filesystem timestamps, this RobotC file was created 2012-05-04 and last modified 2012-05-31</p>
+    <h4>Controls</h4>
+    <ul>
+      <li>Side NXT buttons - move left and right</li>
+      <li>Orange NXT button - jump and double jump</li>
+      <li>Dark grey NXT button - look ahead</li>
+    </ul>
+    <h4>Other Notes</h4>
+    <p>Be sure to take advantage of your double jump and lookahead abilities.</p>
+    <p>The reason the moving box changes direction away from you is to make it impossible to get crushed between objects.</p>
+  </script>
+
+  <script type="text/html" class="gameInfoHtml" data-game="rpcrnly">
+    <p>This game is a race between 8 equally-powered competitors including the player.  Each competitor can lauch a <i>grappling hook</i> forward to grab onto other racers and pull.  Your final rank is determined by sampling your rank at numerous times throughout the 60-second race.</p>
+    <p>According to filesystem timestamps, this RobotC file was created 2015-01-31 and last modified 2015-04-03</p>
+    <h4>Controls</h4>
+    <ul>
+      <li>Side NXT buttons - move left and right.</li>
+      <li>Orange NXT button - Fire the grappling hook if you have it.  Whether you have a grappling hook is indicated in the bottom-right corner.</li>
+      <li>Dark grey NXT button - pause the game</li>
+    </ul>
+    <h4>Other Notes</h4>
+    <p>It is possible to get a perfect score of <strong>110</strong> with the default game parameters, so see if you can do it!  You have to make just the right moves at the beginning to pull ahead before the first scoring event!  <a href="images/rpcrnly110.png">Here is an image of what the scoreboard looks like when this happens!</a></p>
+    <p>Sadly, you have to edit the parameters every time you want to play with edited parameters.</p>
+  </script>
+
+  <script type="text/html" class="gameInfoHtml" data-game="Supa Shooting!!!">
+    <p>A Galaga-like shooting game.</p>
+    <p>According to filesystem timestamps, this RobotC file was created 2011-07-16 and last modified 2011-10-29</p>
+    <h4>Controls</h4>
+    <ul>
+      <li>Side NXT buttons - move left and right</li>
+      <li>Orange NXT button - shoot</li>
+    </ul>
+    <h4>Other Notes</h4>
+    <p>Since the difficulty does not increase, this game is very repetitive.</p>
+  </script>
+
+  <script type="text/html" class="gameInfoHtml" data-game="Running Racer!">
+    <p>This is a platform racing game that randomly generates the obstacles as you go.  You race against 2 AIs, and you are given a score at the end.  The score is based on by your rank, your time, and the number of boosts you collect.</p>
+    <p>12-year-old Tanner implemented <strong><i><a href="https://en.wikipedia.org/wiki/Drafting_(aerodynamics)">drafting</a></i></strong> in this running racer game.  The drafting effect is very strong, and since racers can push each other, it allows racers to stick together and go faster.</p>
+    <p>According to filesystem timestamps, this RobotC file was created 2011-09-12 and last modified 2011-12-01</p>
+    <h4>Controls</h4>
+    <ul>
+      <li>Side NXT buttons - move left and right</li>
+      <li>Orange NXT button - jump</li>
+    </ul>
+    <h4>Other Notes</h4>
+    <p>I once got a score of <strong>136</strong> by getting 11 boosts.  Higher scores are possible.</p>
+  </script>
+
+  <script type="text/html" class="gameInfoHtml" data-game="Oregon Trail NXT!">
+    <p>This is a time trial racing game involving shopping with a fixed budget.  This game is inspired by the 1995 computer game <a href="https://en.wikipedia.org/wiki/Oregon_Trail_II"><i>Oregon Trail II</i></a>.</p>
+    <p>After reading some signs, the player must buy a <strong>wagon</strong>, a <strong>weapon</strong>, and <strong>perks</strong>.  Once the player is done shopping, the player must drive the wagon through a wilderness filled with trees (circles), fences (lines), boosts, and jumps.  These objects are randomly placed as the player moves forward.  The wagon speed and weapon cooldown are displayed during the race.  At the end, the player is shown how much time was spent on the trail, a quantity the player is expected to minimize.</p>
+    <p>According to filesystem timestamps, this RobotC file was created 2011-09-21 and last modified 2011-12-28</p>
+    <h4>Controls</h4>
+    <ul>
+      <li>Intro
+        <ul>
+          <li>Side buttons - move</li>
+          <li>Up button (orange NXT button) - interact; jump</li>
+        </ul>
+      </li>
+      <li>Preparation for the trail
+        <ul>
+          <li>Side buttons - move cursor</li>
+          <li>Up button (orange NXT button) - select</li>
+        </ul>
+      </li>
+      <li>On the trail
+        <ul>
+          <li>Side NXT buttons - steer</li>
+          <li>Orange NXT button - accelerate</li>
+          <li>Dark grey NXT button - brake</li>
+          <li>Touch sensor - fire weapon</li>
+        </ul>
+      </li>
+    </ul>
+    <h4>Problems</h4>
+    This game has a lot of problems.  Here is a list of them:
+    <ul>
+      <li>When I made this game, I thought "Independence" was an event that triggered the Oregon Trail.  In reality, Independence was the city where the Oregon Trail started.</li>
+      <li>The steering is messed up.  You rotate faster and go faster when facing near a cardinal direction.  12-year-old Tanner did not know trigonometry.  If I had known how to use the sine and cosine functions when I made this game, that would have solved the steering problem.</li>
+      <!-- I remember the day I discovered trigonometry.  I was at the Missouri River Regional Library for whatever reason, and I picked up a book about trigonometry.  I read some of the book, and I learned about the sine, cosine, and tangent functions.  When I did, it was an epiphany for me, because I had been trying to implmement rotation in games like this one, but I couldn't figure out how to do it.  This game was made before I read that book.  -->
+      <li>The rockets move slower than the wagon typically does.</li>
+      <li>The line that says "Annual Oregon" uses nxtDisplayTextLine instead of nxtDisplayCenteredTextLine.  I don't know why.</li>
+      <li>The line giving the speed at the top of the screen blocks visibility of the trail ahead.  Maybe if it was at the bottom of the screen instead, that would be better.</li>
+      <li>It would have made sense for the wagon to start facing directly forward.  But instead, the wagon's direction is initialized in the direction of the vector &lt;1, 1&gt;.</li>
+      <li>The time is represented as an integer.  If the type of the variables <code>tme</code> and <code>Dtme</code> are changed to <code>float</code>, the time displayed at the end has 3 digits after the decimal point.  But, they are both type <code>int</code> in the 2011 code.</li>
+      <li>There is a major <strong>glitch</strong> that allows you to beat any time you can get glitchlessly.  Crash into the first tree until you are moving backwards.  Then steer such that you back into the tree.  Colliding with the tree changes your speed in the negative direction, rather than changing your speed toward zero.  So if you back into a tree, you will keep hitting it and gaining negative speed until you slide off a side of it.  With this glitch, it is possible to go so fast that the scrolling cannot keep up with the wagon.</li>
+    </ul>
+    <h4>Strategy</h4>
+    Buy and use the boosts.  Only a <i>greenhorn</i> would select the rockets or mines.
+  </script>
+
+  <script type="text/html" class="gameInfoHtml" data-game="Marioish thing!">
+    <p>This is a simple platformer that generates the objects as you go.  There are simple enemies you can jump on.</p>
+    <p>According to filesystem timestamps, this RobotC file was created 2011-06-19 and last modified 2011-06-26</p>
+    <h4>Controls</h4>
+    <ul>
+      <li>Side NXT buttons - move left and right</li>
+      <li>Orange NXT button - jump</li>
+    </ul>
+    <h4>Other Notes</h4>
+    <p>It is easy to walk off the edge of a platform thinking you are jumping.  For one, the side buttons override the jump button, so you have to release the side button to jump.  For two, it is common to release the jump button while still within the hitbox of a platform, resetting your vertical velocity to 0, causing you to walk off the side of a platform thinking you are jumping.</p>
+  </script>
+
+  <script type="text/html" class="gameInfoHtml" data-game="racecar game!">
+    <p>This game's concept is very contrived.  You control a square, and you compete against another square controlled by an AI.  The winner is the first square reach a score of 1000.  There are two ways to score points:
+    <ul>
+      <li>You score points when your opponent touches the X.  The X chases whichever square is filled in, which switches every time the counter reaches 5.</li>
+      <li>You score 100 points each time you collect one of the small squares that fly by.</li>
+    </ul>
+    The name "racecar" refers to the use of steering to control your movement.  The other game that employs this control style is Oregon Trail NXT!.c.</p>
+    <p>According to filesystem timestamps, this RobotC file was created 2011-08-14 and last modified 2011-08-20, meaning it was made shortly before Oregon Trail NXT!.c, which also uses racecar controls</p>
+    <h4>Controls</h4>
+    <ul>
+      <li>Orange NXT button - go</li>
+      <li>Dark grey NXT button - stop</li>
+      <li>Side NXT buttons - steer</li>
+    </ul>
+    <h4>Other Notes</h4>
+    <p>Winning this game is easy.  If you're looking for a challenge, try to beat this game without the opponent scoring any points.</p>
+    <p>Steering in this game has some problems because I didn't know about the sine and cosine functions when I made this game.  In this game, directions are stored as integers ranging from 1 to 20 inclusive (yes, counting from 1, not 0).  The game uses hard-coded direction vectors &lt;1, 0&gt;, &lt;0.8, 0.2&gt;, &lt;0.6, 0.4&gt;, &lt;0.4, 0.6&gt;, etc.  This means each time you move, you move a <a href="https://en.wikipedia.org/wiki/Taxicab_geometry">Manhattan distance</a> of 1.  Since there are only 20 possible directions, you can't rotate by small angles.  This type of steering would be less practical if smaller rotation angles were needed.</p>
+  </script>
+
+  <script type="text/html" class="gameInfoHtml" data-game="battler!">
+    <p>This is a fighting game that originally used a <strong>joystick</strong>, which was a Logitech F310 gamepad.  The joystick would be connected to a computer with the RobotC IDE installed, and the computer would be connected to the NXT.</p>
+    <p>In this game, your goal is to eliminate as many enemies as you can before being eliminated yourself.  The first number displayed is the number of enemies you have elminated.</p>
+    <p>There are 3 ways to eliminate enemies:</p>
+    <ul>
+      <li>Touch them when your elevation is higher than theirs.  This is the only way enemies can eliminate you.</li>
+      <li>Hit them with your projectile attack (joystick button 2).  The third displayed number is the cooldown for this attack, and the second number is how many of these you have (always 0 or 1).</li>
+      <li>Hit them with your 'X' attack (joystick button 3).  The fourth displayed number is the cooldown for this attack.  This attack recharges only once it is completely depleted, so you will want to be aware of that fourth number.</li>
+    </ul>
+    <p>When eliminated, enemies are teleported off the screen to the left or right, and re-enter the screen shortly.  Each enemy has a specific x coordinate they teleport to when eliminated.</p>
+    <p>According to filesystem timestamps, this RobotC file was created 2011-06-15 and last modified 2015-03-28</p>
+    <h4>Controls</h4>
+    <p style="color: red;">I have mapped the <strong>number keys</strong> to the joystick buttons, so a keyboard is required.</p>
+    <ul>
+      <li>Side NXT buttons - move left and right</li>
+      <li>Orange NXT button or joystick button 1 - jump</li>
+      <li>Joystick button 2 - projectile attack</li>
+      <li>Joystick button 3 - X attack</li>
+    </ul>
+    <h4>Other Notes</h4>
+    <p>There is <strong>no</strong> random number generation (rng) in this game.</p>
+    <p>My personal best is 255, which I got by standing in the left half of the screen, using the projectile attack to the right, and moving left and right to avoid the leftmost enemy as it jumps over me.  I eventually made my mistake and the leftmost enemy eliminated me.</p>
+    <p>This game has sound!</p>
+  </script>
+
+  <script type="text/html" class="gameInfoHtml" data-game="3D game!!!">
+    <p>Not really a game, this is a proof-of-concept of drawing 3-dimensional objects on the NXT's display.</p>
+    <p>According to filesystem timestamps, this RobotC file was created 2011-08-04 and last modified 2012-06-19</p>
+    <h4>Controls</h4>
+    <ul>
+      <li>NXT buttons - move</li>
+      <li>Touch sensor - jump</li>
+    </ul>
+    <h4>Other Notes</h4>
+    <p>Sadly, I never made an actual fun 3D RobotC game.</p>
+  </script>
+
+  <script type="text/html" class="gameInfoHtml" data-game="Supa Battle!!!!!">
+    <p>Yet another platformer.</p>
+    <p>In this game, you get to choose 3 different game paramters: world, speed, and whether jumping on opponents gets them.</p>
+    <p>The game lasts 45 seconds regardless of the speed.  To do this, the RobotC code used timers, an advanced RobotC feature.  Since my translator is not able to detect integer division, the time is displayed as floating point number in this edition of the game.  On an actual NXT, it would be displayed as an integer.</p>
+    <p>According to filesystem timestamps, this RobotC file was created 2011-07-15 and last modified 2015-04-25</p>
+    <h4>Controls</h4>
+    <ul>
+      <li>Orange NXT button - jump, double jump, select</li>
+      <li>Side NXT buttons - move left and right</li>
+      <li>Dark grey NXT button - pause</li>
+    </ul>
+    <h4>Other Notes</h4>
+    <p>There are platforms that go on forever above the arena.</p>
+    <p>This game has sound!</p>
+  </script>
+
+  <!-- FILESYSTEM TIMESTAMPS: 
+    jumper!.c 2011-06-03 2011-12-01
+    Marioish thing!.c 2011-06-19 2011-06-26
+    Oregon Trail NXT!.c 2011-09-21 2011-12-28
+    racecar game!.c 2011-08-14 2011-08-20
+    Supa Battle!!!!!.c 2011-07-15 2015-04-25
+    bombermanNXT!.c 2012-03-16 2012-06-12
+    3D game!!!.c 2011-08-04 2012-06-19
+    3D!.c 2011-06-10 2012-05-03
+    battler!.c 2011-06-15 2015-03-28
+    battler fast!.c 2011-07-23 2011-10-05
+    battler slow!.c 2011-06-18 2011-06-19
+  -->
+</head>
+
+<body onload="onLoad()" style="margin: 0px; padding: 0px;">
+  <div id="nxtDisplayContainer" class="d-none text-center">
+    <canvas id="nxtDisplay" width="0" height="0"></canvas>
+    <canvas id="leftTouchControls" width="200" height="200" style="position:fixed;left:0px;bottom:0px;"></canvas>
+    <canvas id="rightTouchControls" width="125" height="125" style="position:fixed;right:0px;bottom:0px;"></canvas>
+  </div>
+  <div id="nonNxtDisplayContainer" class="container d-none">
+    <p>
+      When I was ages 11-15, I made video games for the Lego Mindstorms NXT as a hobby.  I used <a href="https://en.wikipedia.org/wiki/Lego_Mindstorms_NXT#ROBOTC">RobotC</a> for all the games featured on this webpage.  I also made some cheap games in <a href="https://en.wikipedia.org/wiki/Lego_Mindstorms_NXT#NXT-G">NXT-G</a>, but NXT-G did not scale up to the program sizes of these games.
+    </p>
+    <p>
+      The NXT is not suitable as a video game platform.  But I made games for the NXT because the NXT was what I had been taught how to program.  The NXT's display was 100 pixes wide and 64 pixels tall.  Each pixel had boolean state: it was either on (black) of off (green).  The NXT had 4 buttons, and some of my games also used a touch sensor plugged into port 1.
+    </p>
+    <p>
+      You can play any of the games below in a web browser.  All of them work with a keyboard, and most of them work with a touchscreen using on-screen buttons.  Use your browser's refresh button to reset the game, or back button to return to this page.  If you're on a keyboard, use the arrow keys or WASD for the NXT buttons, and use the space bar for the touch sensor.  If you're on a touchscreen, use the on-screen buttons.
+    </p>
+    <p>
+      To make these games work in the web browser, I developed a RobotC-to-JavaScript translator.  The translated code is executed as a JavaScript async function.  I implemented all the symbols needed as JavaScript, including functions to draw on the screen, variables giving the state of the buttons, and functions that wait.  The translator does not support all of RobotC, but it is enough to make all of these games work.  I used async functions to support JavaScript's need to free the thread, and I made the translator insert code that calls <code>await</code> in all while loops because waitless infinite loops were used in some of the programs.  The biggest surprise was that RobotC is case-insensitive.
+    </p>
+    <p>
+      Click a game!<br />
+      <span class="d-none d-md-block">The platformers are on the left, and non-platformers are on the right.</span>
+    </p>
+
+    <div class="row">
+      <div class="col-md-6">
+        <a href="#" class="gameCardClickable" data-toggle="modal"
+          data-target=".gameModal"
+          data-game="Dogfight NXT!A"
+        >
+          <!-- content is added here by JS -->
+        </a>
+      </div>
+      <div class="col-md-6">
+        <a href="#" class="gameCardClickable" data-toggle="modal"
+          data-target=".gameModal"
+          data-game="rpcrnly"
+        >
+          <!-- content is added here by JS -->
+        </a>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <a href="#" class="gameCardClickable" data-toggle="modal"
+          data-target=".gameModal"
+          data-game="XD thing!"
+        >
+          <!-- content is added here by JS -->
+        </a>
+      </div>
+      <div class="col-md-6">
+        <a href="#" class="gameCardClickable" data-toggle="modal"
+          data-target=".gameModal"
+          data-game="Supa Shooting!!!"
+        >
+          <!-- content is added here by JS -->
+        </a>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <a href="#" class="gameCardClickable" data-toggle="modal"
+          data-target=".gameModal"
+          data-game="Running Racer!"
+        >
+          <!-- content is added here by JS -->
+        </a>
+      </div>
+      <div class="col-md-6">
+        <a href="#" class="gameCardClickable" data-toggle="modal"
+          data-target=".gameModal"
+          data-game="Oregon Trail NXT!"
+        >
+          <!-- content is added here by JS -->
+        </a>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <a href="#" class="gameCardClickable" data-toggle="modal"
+          data-target=".gameModal"
+          data-game="Marioish thing!"
+        >
+          <!-- content is added here by JS -->
+        </a>
+      </div>
+      <div class="col-md-6">
+        <a href="#" class="gameCardClickable" data-toggle="modal"
+          data-target=".gameModal"
+          data-game="racecar game!"
+        >
+          <!-- content is added here by JS -->
+        </a>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <a href="#" class="gameCardClickable" data-toggle="modal"
+          data-target=".gameModal"
+          data-game="Supa Battle!!!!!"
+        >
+          <!-- content is added here by JS -->
+        </a>
+      </div>
+      <div class="col-md-6">
+        <a href="#" class="gameCardClickable" data-toggle="modal"
+          data-target=".gameModal"
+          data-game="battler!"
+        >
+          <!-- content is added here by JS -->
+        </a>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <a href="#" class="gameCardClickable" data-toggle="modal"
+          data-target=".gameModal"
+          data-game="3D game!!!"
+        >
+          <!-- content is added here by JS -->
+        </a>
+      </div>
+    </div>
+
+
+
+    <div class="modal gameModal" tabindex="-1" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="gameModalHeaderText"><!-- content is added here by JS --></h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body gameModalBody"><!-- content is added here by JS --></div>
+          <div class="modal-footer">
+            <a href="#" class="gameModalPlayLink btn btn-success w-100"><!-- content is added here by JS --></a>
+            <a href="#" class="gameModalLink w-100 text-center">Link to this modal</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+
+</html>
