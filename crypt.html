@@ -10,48 +10,130 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.2/rollups/aes.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js" integrity="sha512-E8QSvWZ0eCLGk4km3hxSsNmGWbLtSCSUcewDQPQWZF6pEU8GlT8a5fF32wOl1i8ftdMhssTrF/OhyGWwonTcXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script>
       const SEPARATOR = '%'; // % is not allowed in base64 so I can use it to separate base64 strings
 
-      function getInputAndPassword() {
-        return {
-          input: document.getElementById("input").value,
-          password: document.getElementById("password").value
-        };
+      // https://stackoverflow.com/a/60550134
+
+      function isFileCheckboxChecked() {
+        return document.getElementById("fileCheckbox").checked;
       }
-      function encrypt() {
-        const {input, password} = getInputAndPassword();
+      function getInputAndPassword(useWordArray) {
+        return new Promise((resolve, reject) => {
+          const password = document.getElementById("password").value;
+          if(isFileCheckboxChecked()) {
+            const file = document.getElementById("fileInput").files[0];
+            const reader = new FileReader();
+            reader.onload = () => {
+              let input;
+              if(useWordArray) {
+                input = CryptoJS.lib.WordArray.create(reader.result);
+              } else {
+                input = reader.result;
+              }
+              resolve({input, password});
+            };
+            reader.onerror = function() {
+              reject();
+            };
+            if(useWordArray) {
+              reader.readAsArrayBuffer(file);
+            } else {
+              reader.readAsText(file);
+            }
+          } else {
+            resolve({
+              input: document.getElementById("input").value,
+              password
+            });
+          }
+        });
+      }
+      function dowloadFile(fileContentsStringOrUint8Array) {
+        var fileEnc = new Blob([fileContentsStringOrUint8Array]);
+        var a = document.createElement("a");
+        var url = window.URL.createObjectURL(fileEnc);
+        var filename = "output";
+        a.href = url;
+        a.download = filename;
+        a.click();
+        window.URL.revokeObjectURL(url);
+      }
+      function writeToOutputTextarea(outputString) {
+        document.getElementById("output").value = outputString;
+      }
+      async function encrypt() {
+        const {input, password} = await getInputAndPassword(true);
         const encrypted = CryptoJS.AES.encrypt(input, password);
         const ciphertext = encrypted.ciphertext.toString(CryptoJS.enc.Base64);
         const salt = encrypted.salt.toString(CryptoJS.enc.Base64);
-        document.getElementById("output").value = [salt, ciphertext].join(SEPARATOR);
+        const outputString = [salt, ciphertext].join(SEPARATOR);
+        if(isFileCheckboxChecked()) {
+          dowloadFile(outputString);
+        } else {
+          writeToOutputTextarea(outputString);
+        }
       }
-      function decrypt() {
-        const {input, password} = getInputAndPassword();
+      function convertWordArrayToUint8Array(wordArray) {
+        var arrayOfWords = wordArray.hasOwnProperty("words") ? wordArray.words : [];
+        var length = wordArray.hasOwnProperty("sigBytes") ? wordArray.sigBytes : arrayOfWords.length * 4;
+        var uInt8Array = new Uint8Array(length), index=0, word, i;
+        for (i=0; i<length; i++) {
+          word = arrayOfWords[i];
+          uInt8Array[index++] = word >> 24;
+          uInt8Array[index++] = (word >> 16) & 0xff;
+          uInt8Array[index++] = (word >> 8) & 0xff;
+          uInt8Array[index++] = word & 0xff;
+        }
+        return uInt8Array;
+      }
+      async function decrypt() {
+        const {input, password} = await getInputAndPassword(false);
         const [salt, ciphertext] = input.split(SEPARATOR);
-        const decrypted = CryptoJS.AES.decrypt(
+        let outputWordArray = CryptoJS.AES.decrypt(
           {
             ciphertext: CryptoJS.enc.Base64.parse(ciphertext),
             salt: CryptoJS.enc.Base64.parse(salt)
           },
           password
         );
-        document.getElementById("output").value = decrypted.toString(CryptoJS.enc.Utf8);
+        if(isFileCheckboxChecked()) {
+          dowloadFile(convertWordArrayToUint8Array(outputWordArray));
+        } else {
+          writeToOutputTextarea(outputWordArray.toString(CryptoJS.enc.Utf8));
+        }
+      }
+      function toggleFile(target) {
+        const isFile = target.checked;
+        if(isFile) {
+          document.getElementById("input").style.display = "none";
+          document.getElementById("outputHidable").style.display = "none";
+          document.getElementById("fileInput").style.display = "initial";
+        } else {
+          document.getElementById("fileInput").style.display = "none";
+          document.getElementById("input").style.display = "initial";
+          document.getElementById("outputHidable").style.display = "initial";
+        }
       }
     </script>
   </head>
   <body>
     <div class="container">
       This page is a simple crypto tool using CryptoJS.AES.<br />
-      Input:
+      Input:  <input type="checkbox" id="fileCheckbox" onclick="toggleFile(this);"/>Use file
+      <br />
       <textarea style="width: 100%; height: 200px;" id="input"></textarea>
+      <input id="fileInput" type="file" style="display: none;"/>
+      <br />
       Password: <input type="password" style="width: 100%;" id="password"></textarea>
       <button onclick="encrypt();">ENCRYPT</button>
       <button onclick="decrypt();">DECRYPT</button>
       <br />
-      Output:
-      <textarea style="width: 100%; height: 200px;" id="output"></textarea>
+      <span id="outputHidable">
+        Output:
+        <textarea style="width: 100%; height: 200px;" id="output"></textarea>
+      </span>
     </div>
   </body>
 </html>
