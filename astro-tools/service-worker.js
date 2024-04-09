@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/astro-tools/precache-manifest.1a0311bbcf2c3744fb32d2b79fab92ed.js"
+  "/astro-tools/precache-manifest.e0ffe6cbf9afb7f358bc845cad085a81.js"
 );
 
 self.addEventListener('message', (event) => {
