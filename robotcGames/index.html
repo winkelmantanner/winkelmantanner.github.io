@@ -248,7 +248,7 @@
   </div>
   <div id="nonNxtDisplayContainer" class="container d-none">
     <p>
-      When I was ages 11-15, I made video games for the Lego Mindstorms NXT as a hobby.  I used <a href="https://en.wikipedia.org/wiki/Lego_Mindstorms_NXT#ROBOTC">RobotC</a> for all the games featured on this webpage.  I also made some cheap games in <a href="https://en.wikipedia.org/wiki/Lego_Mindstorms_NXT#NXT-G">NXT-G</a>, but NXT-G did not scale up to the program sizes of these games.
+      When I was ages 11-15, I made video games for the Lego Mindstorms NXT as a hobby.  I used RobotC for all the games featured on this webpage.  I also made some cheap games in NXT-G, but NXT-G did not scale up to the program sizes of these games.
     </p>
     <p>
       The NXT is not suitable as a video game platform.  But I made games for the NXT because the NXT was what I had been taught how to program.  The NXT's display was 100 pixes wide and 64 pixels tall.  Each pixel had boolean state: it was either on (black) of off (green).  The NXT had 4 buttons, and some of my games also used a touch sensor plugged into port 1.
@@ -257,7 +257,7 @@
       You can play any of the games below in a web browser.  All of them work with a keyboard, and most of them work with a touchscreen using on-screen buttons.  Use your browser's refresh button to reset the game, or back button to return to this page.  If you're on a keyboard, use the arrow keys or WASD for the NXT buttons, and use the space bar for the touch sensor.  If you're on a touchscreen, use the on-screen buttons.
     </p>
     <p>
-      To make these games work in the web browser, I developed a RobotC-to-JavaScript translator.  The translated code is executed as a JavaScript async function.  I implemented all the symbols needed as JavaScript, including functions to draw on the screen, variables giving the state of the buttons, and functions that wait.  The translator does not support all of RobotC, but it is enough to make all of these games work.  I used async functions to support JavaScript's need to free the thread, and I made the translator insert code that calls <code>await</code> in all while loops because waitless infinite loops were used in some of the programs.  The biggest surprise was that RobotC is case-insensitive.
+      To make these games work in the web browser, I developed a RobotC-to-JavaScript translator.  The translated code is executed as a JavaScript async function.  I implemented all the needed built-in symbols as JavaScript, including functions to draw on the screen, variables giving the state of the buttons, and functions that wait.  The translator does not support all of RobotC, but it is enough to make all of these games work.  I used async functions to support JavaScript's need to free the thread, and I made the translator insert code that calls <code>await</code> in all while loops because waitless infinite loops were used in some of the programs.  The biggest surprise was that RobotC is case-insensitive.
     </p>
     <p>
       Click a game!<br />
