@@ -15,9 +15,17 @@
     <div class="container">
       <h1>My Migraine Condition</h1>
       <p>I suffer from migraine.  This started around 2018 and has been gradually increasing in severity.  Here are some treatments I have tried: magnesium, sumatriptan, amitriptyline, riboflavin, coenzyme Q10, Nurtec (rimegepant), propranolol, Emgality (galcanezumab), topiramate, rizatriptan.  Starting around 2020, I have been writing down my health experiences in a Google sheet.  I record text and tabular data for each day.  I have written python programs that analyze the data I have written in this spreadsheet.</p>
-      <p>Here are some findings:</p>
+      <h4>Terminology</h4>
+      <ul>
+        <li><strong>attack</strong>&nbsp;&nbsp;&nbsp;one continuous instance of a migraine, including all symptoms. For me, these almost never last overnight. I have a boolean in my spreadsheet indicating whether I had a migraine attack on each day.</li>
+        <li><strong>laterality</strong>&nbsp;&nbsp;&nbsp;which side of the body - left, right, or both — a condition, symptom, or anatomical structure affects</li>
+        <li><strong>bilateral</strong>&nbsp;&nbsp;&nbsp;affecting both sides of the body equally</li>
+        <li><strong>preventive</strong>&nbsp;&nbsp;&nbsp;a treatment, such as a medication, intended to prevent future migraine attacks. These are administered at regular intervals.</li>
+        <li><strong>abortive</strong>&nbsp;&nbsp;&nbsp;a treatment, such as a medication, intended to weaken or end a migraine attack that has already started. These are administered when the patient thinks they are having or a migraine attack or are about to have a migraine attack.</li>
+      </ul>
+      <h2>Findings</h2>
       <p>
-        <h2>Day of Week and Laterality</h2>
+        <h3>Day of Week and Laterality</h3>
         This graph shows every migraine attack I have recorded since mid-2019.
         <br />
         <img src="hadattackByDayOfWeek.png" height="500px" style="border: 2px solid rgb(127,127,127)" title="day of week attack frequency graph" alt="day of week attack frequency graph" />
@@ -26,9 +34,9 @@
         <p>The laterality has changed over the years. First, there was the bilateral phase, when the majority of headaches were in the center of my forehead. The bilateral phase is not shown in the graph because I didn't record a laterality for each headache until 2021. Around the end of 2019, the headaches transitioned to being primarily left unilateral (that is, on the left side of my forehead).  But the left unilateral majority was also only a phase.  Today, the attacks are about 50% right unilateral and 50% left unilateral.</p>
       </p>
       <p>
-        <h2>Ibuprofen</h2>
+        <h3>Ibuprofen</h3>
         <p>Ibuprofen was the first medication I tried for head pain.  I first took ibuprofen when my head pain was just beginning in 2018.  I knew that my mother had taken ibuprofen for her migraines for many years.  In 2019, I came to believe that ibuprofen didn't work.  There was also a time when I told my doctor that ibuprofen caused head pain the next day.  I took ibuprofen many times for migraine attacks in 2019 and 2020.  I believed it didn't work, but I often took it anyway, often because my parents wanted me to take it.  I took either one, two, or three 200mg tablets at once as an abortive.  By 2021, I had stopped taking ibuprofen.  There were only three occasions when I took ibuprofen in 2021 and 2022 combined.</p>
-        <p>After a breakup with my neurologist in late 2022, I didn't have a prescription to Nurtec.  I didn't believe Nurtec worked, because I had done a trial in which I flipped a coin to determine whether to take Nurtec on 44 Sunday mornings and found no relationship between whether I took Nurtec and any metrics of my head pain.  So I was in a position where ibuprofen was the medication to try, since it doesn't require a prescription from a physician.</p>
+        <p>After a breakup with my neurologist in late 2022, I didn't have a prescription to Nurtec.  I didn't believe Nurtec worked, because I had done a trial in which I flipped a coin to determine whether to take Nurtec on 44 Sunday mornings (this trial is described in the Nurtec section) and found no relationship between whether I took Nurtec and any metrics of my head pain.  So I was in a position where ibuprofen was the medication to try, since it doesn't require a prescription from a physician.</p>
         <h4>My Placebo-Controlled Trial of Ibuprofen</h4>
         <p>In early 2023, I started a randomized, placebo-controlled trial of ibuprofen.  This kind of trial is known for its use by professionals on large numbers of patients, but I employed this technique for myself.</p>
         <p>The trial consisted of a number of rounds that ended up being three.  For each round, I put two <a href="https://a.co/d/7lAudNK">capsules</a> in each of ten small resealable plastic bags.  For five of each round's bags, each capsule contained a 200mg tablet of ibuprofen, for a total of 400mg of ibuprofen in the bag.  For the other five bags, each capsule contained a placebo.  I did a lot of experimenting with placebos to minimize the chance of knowing whether a bag was ibuprofen or placebo on the day of taking it.  The biggest factor for placebo selection was the sound when the capsule is handled.  In the first round, I used pepitas as the placebos.  In the second round I used small pinto beans.  And in the third round I used small white beans.</p>
@@ -47,7 +55,7 @@
         <p>This trial was extremely successful from my point of view.  When I started the trial, I was not expecting ibuprofen to perform well.  Now I know that ibuprofen is highly effective as an abortive for my migraine attacks.</p>
       </p>
       <p>
-        <h2>Nurtec</h2>
+        <h3>Nurtec</h3>
         <p>I started using Nurtec as a migraine abortive in October 2020, less than a year after it hit the market. I use Nurtec as an abortive medication, which means I take it when I am having a migraine attack, intending for Nurtec to abort the migraine attack. As of 2026-08-15, I have taken Nurtec 213 times. Nurtec has absolutely no side effects for me. Also, Nurtec can be taken without any liquids, unlike all my other medications. So there are times when Nurtec is the only abortive I can take.</p>
         <p>At first, Nurtec seemed to be highly effective. But after a few months, Nurtec seemed to be ineffective.</p>
         <h4>2021-2023 Sunday Nurtec Trial</h4>
@@ -72,7 +80,7 @@
         <p>I think Emgality is the best of these three explanations, but it has problems, too. The problem is, if I exclude the high-Emgality rounds of the Sunday trial, Nurtec still fails. There are two parts of the trial that can be considered low-Emgality: the 7 rounds before Emgality was started, and the roughly 10 rounds after Emgality should have worn off. Regardless of which of these trials are selected, there is no statistically significant correlation between Nurtec and any metric of head pain. One possible cause of this would be Emgality's effect either lingering for several months, or working at much lower blood concentrations than what is targeted by the treatment.</p>
       </p>
       <p>
-        <h2>Amitriptyline</h2>
+        <h3>Amitriptyline</h3>
         <p>
           Amitriptyline is the most harmful medication I have tried.  Amitriptyline was the first treatment prescribed my first neurologist.  I was prescribed 25mg amitriptyline per day, to be taken in the evening.  I tried amitriptyline in early 2020 (before covid).
         </p>
@@ -84,22 +92,22 @@
         </p>
       </p>
       <p>
-        <h2>Escitalopram</h2>
+        <h3>Escitalopram</h3>
         <p>In 2025, I started taking escitalopram (Lexapro) for depression. Unfortunately, escitalopram worsened my migraine condition.  Specifically, escitalopram increased my migraine attack frequency.  Escitalopram may have worsened the migraine severity as well, but an effect on severity is not clearly evident.  It is likely that my use of abortive medications prevented an increase in observed migraine severity.</p>
         <h5>15 milligram episode</h5>
         <p>I am confident that escitalopram increases my migraine attack frequency because of what happened when I increased the dosage of escitalopram from 10mg per day to 15mg per day.  This happened after months of me resisting my psychiatrist and counselor urging me to increase the dosage to 15mg per day.  I finally agreed to increase the dosage because of how hard they were pushing me to do so.  But after 16 days on the 15mg dosage, I decreased the dosage back to 10mg per day because I was suffering from more head pain than usual on the 15mg dosage.</p>
         <p>The following graph shows the effect of the increased escitalopram dosage on my migraine condition.  The head pain data in that graph is a number called the "troublesomeness" that I have recorded every day since 2020.  The head pain troublesomeness is intended to be on the 10-point pain scale, and it represents the amount of head pain I experienced during each calendar day.</p>
         <img src="15mgEscitalopramAndHeadPainCropped.png" height="500px" style="border: 2px solid rgb(127,127,127)" title="graph of escitalopram and migraine metrics in the summer of 2026" />
-        <p>The key observation in that graph is that the head pain numbers tended to be higher when the dosage was 15mg per day.  If each day is considered an independent data point, then the p-value of this tendency is about 0.01.  The missed dose was the 4th of July.</p>
+        <p>The key observation in that graph is that the head pain numbers tended to be higher when the dosage was 15mg per day.  If each day is considered an independent data point, then the p-value of this tendency is about 0.01 (that is, if the data was randomly rearranged, the probability that the tendency would be at least this strong is about 0.01, or 1%).  The missed dose was the 4th of July.</p>
         <p>It is likely that escitalopram has improved my psychological wellbeing, but this effect is not clearly evident.  I record metrics of my mental health as well as my migraine condition, and escitalopram does not have any statistically significant correlation with any of the metrics of my mental health.  The only clearly evident effect of escitalopram is the increased migraine frequency.</p>
       </p>
       <p>
-        <h2>Foods</h2>
+        <h3>Foods</h3>
         Every day for over 2 years, I recorded a list of foods I eat.  I used a python program to analyze this data.  There are no noteworthy correlations between the troublesomeness of my condition and any of more than 50 foods.
       </p>
-      <p>
-        <h2>Conclusion</h2>
-        I have a history of believing a treatment works for my migraine headaches but later deciding it does not work.  I followed this pattern with magnesium, sumatriptan, Nurtec, propranolol, and topiramate.  Now that I have followed this pattern multiple times, I am very skeptical when someone says a treatment helped their chronic condition.
+        <h1>Conclusion</h1>
+        <p>All preventive treatments for my migraine condition failed, and some of them had harmful side effects. But all abortive medications that I tried proved effective, with either no observed side effects or benefits that outweigh the side effects.</p>
+        <p>This page only has the most notable information I have learned from my analysis of my neurological health. I have written over 3 million characters of text in my records, and I estimate that half those characters were about health. This effort is in response to the suffering I have experienced from my neurological health problems. Ever since my neurological health problems began (around 2019), reducing suffering has been my main goal in life. I used to care about other things, but I realize now that those interests came from the influence of other people and do not directly affect human wellbeing. You can tell from this page that I have put a lot of effort into reducing my own suffering. One of my goals from this page is that other people could learn from my experiences, so that they can use this information to reduce other people's suffering.
       </p>
       <a href="/">Click here to go to the index page of my website</a>
     </div>
